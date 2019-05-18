@@ -7,19 +7,19 @@ H5测试
 ```
 <template>
     <avatar
-		selWidth="200px" selHeight="400upx"
-		:avatarSrc="url" @upload="myUpload"
-		avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;" >
-	</avatar>
+        selWidth="200px" selHeight="400upx"
+        :avatarSrc="url" @upload="myUpload"
+        avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;" >
+    </avatar>
 </template>
 <script>
     import avatar from "../../components/yqking-avatar/yqking-avatar.vue";
     export default {
-    	data() {
-			return {
-				url: "../../static/logo.png"
-			}
-		},
+        data() {
+            return {
+                url: "../../static/logo.png"
+            }
+        },
         methods: {
             myUpload(path) {
                 this.url = path;
