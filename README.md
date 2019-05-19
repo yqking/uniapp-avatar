@@ -1,24 +1,25 @@
 示例说明(可以直接去github下载项目运行)
 
 H5测试
+
 <img src='http://www.snyvic.eu/static/m.png'/>
 
 ```
 <template>
     <avatar
-		selWidth="200px" selHeight="400upx"
-		:avatarSrc="url" @upload="myUpload"
-		avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;" >
-	</avatar>
+	selWidth="200px" selHeight="400upx"
+	:avatarSrc="url" @upload="myUpload"
+	avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;" >
+    </avatar>
 </template>
 <script>
     import avatar from "../../components/yq-avatar/yq-avatar.vue";
     export default {
     	data() {
-			return {
-				url: "../../static/logo.png"
-			}
-		},
+	    return {
+		url: "../../static/logo.png"
+	    }
+	},
         methods: {
             myUpload(path) {
                 this.url = path;
@@ -60,4 +61,4 @@ TODO<br/>
 
 <br/>
 
-## 您的支持是开源的动力，觉得不错就给个好评，谢谢! ^-
+## 您的支持是开源的动力，觉得不错就给颗星，谢谢! ^-
