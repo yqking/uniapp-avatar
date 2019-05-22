@@ -8,7 +8,7 @@ H5测试
 <template>
     <avatar
 	selWidth="200px" selHeight="400upx"
-	:avatarSrc="url" @upload="myUpload"
+	:avatarSrc="url" @upload="myUpload" quality="0.9"
 	avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;" >
     </avatar>
 </template>
@@ -41,6 +41,7 @@ H5测试
 selWidth、selHeight 设置裁剪区域的宽高<br/>
 avatarSrc 设置头像图片<br/>
 avatarStyle 设置头像样式<br/>
+quality 设置导出的图片质量<br/>
 
 方法<br/>
 upload 设置回调函数，点击上传后，参数path回传裁剪的临时图片路径<br/>
@@ -49,6 +50,7 @@ upload 设置回调函数，点击上传后，参数path回传裁剪的临时图
 
 | 版本  | 变化                                           |
 | ----- | :--------------------------------------------- |
+| 3.0.3 | 增加到处图片质量调整参数                                     |
 | 3.0.2 | 加强对H5和Android兼容                                        |
 | 3.0.1 | 如果tabBar存在，自动隐藏                                     |
 | 3.0.0 | 增加色彩变化，android平台需等待官方修复bug，其他平台测试正常 |
