@@ -51,7 +51,7 @@ H5测试
 
 | 事件   | 必须 | 说明                                                         |
 | ------ | ---- | :----------------------------------------------------------- |
-| upload | 是   | 返回格式 {avatar: xx, path: xx, index: xx}<br/>avatar: 组件对象，可以通过更新imgSrc值，更新头像<br/>path: 选定后的临时头像地址<br/>index: 组件索引值，需要设置了index属性，默认undefined |
+| upload | 是   | 返回格式 {avatar: xx, path: xx, index: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 组件索引值，需要设置了index属性，默认undefined |
 
 <br/>
 
