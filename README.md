@@ -43,7 +43,7 @@ H5测试
 | selWidth    | 是   | 裁剪区域的宽                                                 |
 | selHeight   | 是   | 裁剪区域的高                                                 |
 | avatarSrc   | 否   | 头像地址, 虽然空不会报错，但不方便使用，建议填写             |
-| avatarStyle | 否   | 头像样式，样式{width: 150upx; height: 150upx; border-radius: 100%;} |
+| avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
 | quality     | 否   | 取值范围0~1，默认0.9                                         |
 | index       | 否   | 回调upload方法，返回该index值，默认undefined                 |
 
