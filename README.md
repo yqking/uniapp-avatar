@@ -1,4 +1,4 @@
-示例说明(可以直接去github下载项目运行)
+示例说明(可以直接去github下载项目运行，联系方式924515629)
 
 H5测试
 
@@ -7,8 +7,7 @@ H5测试
 ```
 <template>
     <avatar
-        selWidth="200px" selHeight="400upx"
-        :avatarSrc="url" quality="0.9" index="0" @upload="myUpload" 
+        selWidth="200px" selHeight="400upx" :avatarSrc="url" @upload="myUpload" 
         avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;">
     </avatar>
 </template>
@@ -46,6 +45,14 @@ H5测试
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
 | quality     | 否   | 取值范围0~1，默认0.9                                         |
 | index       | 否   | 回调upload方法，返回该index值，默认undefined                 |
+| minWidth    | 否   | 缩放允许的最小宽度，数值类型，不需要添加单位后缀，默认单位px |
+| minHeight   | 否   | 缩放允许的最小高度，数值类型，不需要添加单位后缀，默认单位px |
+| minScale    | 否   | 缩放允许的最小比例，默认0.3                                  |
+| maxScale    | 否   | 缩放允许的最大比例，默认4                                    |
+| canRotate   | 否   | 是否允许旋转，默认true                                       |
+| canScale    | 否   | 是否允许缩放，默认true                                       |
+| lockWidth   | 否   | 锁定宽度，图片宽度缩放至裁剪框的大小，只允许纵向移动，默认false |
+| lockHeight  | 否   | 锁定高度，图片高度缩放至裁剪框的大小，只允许横向移动，默认false |
 
 <br/>
 
@@ -57,6 +64,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.1.2 | 新增控制属性minWidth/minHeight/minScale/maxScale/canRotate/canScale/lockWidth/lockHeight |
 | 3.1.1 | 调整回调返回数据内容，修复小程序报错问题                     |
 | 3.1.0 | 增加index属性，修改回调返回的数据格式                        |
 | 3.0.4 | H5平台适配HX1.9.9                                            |
