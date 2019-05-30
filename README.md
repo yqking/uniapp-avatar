@@ -8,7 +8,7 @@ H5测试
 <template>
     <avatar
         selWidth="200px" selHeight="400upx" :avatarSrc="url" @upload="myUpload" 
-        avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;">
+        avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;"  inner='true'>
     </avatar>
 </template>
 <script>
@@ -43,6 +43,7 @@ H5测试
 | selHeight   | 是   | 裁剪区域的高                                                 |
 | avatarSrc   | 否   | 头像地址, 虽然空不会报错，但不方便使用，建议填写             |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
+| inner       | 否   | 只允许在图片范围内移动，并禁用旋转，默认false                |
 | quality     | 否   | 取值范围0~1，默认0.9                                         |
 | index       | 否   | 回调upload方法，返回该index值，默认undefined                 |
 | minWidth    | 否   | 缩放允许的最小宽度，数值类型，不需要添加单位后缀，默认单位px |
@@ -51,8 +52,14 @@ H5测试
 | maxScale    | 否   | 缩放允许的最大比例，默认4                                    |
 | canRotate   | 否   | 是否允许旋转，默认true                                       |
 | canScale    | 否   | 是否允许缩放，默认true                                       |
-| lockWidth   | 否   | 锁定宽度，图片宽度缩放至裁剪框的大小，只允许纵向移动，默认false |
-| lockHeight  | 否   | 锁定高度，图片高度缩放至裁剪框的大小，只允许横向移动，默认false |
+| stretch     | 否   | 图片一边自动铺满裁剪框<br/>x：x轴方向，图片自动铺满<br/>y:   y轴方向，图片自动铺满<br/>long:  根据图片长边自动铺满<br/>short:  根据图片短边自动铺满<br/>longSel:  根据裁剪框长边自动铺满<br/>shortSel:  根据裁剪框短边自动铺满 |
+| lock        | 否   | 锁定图片移动方向<br/>x:  锁定x轴方向<br/>y:  锁定y轴方向<br/>long: 锁定图片长边方向<br/>short:  锁定图片短边方向<br/>longSel:  锁定裁剪框长边方向<br/>shortSel:  锁定裁剪框短边方向 |
+
+<br/>
+
+| 事件   | 必须 | 说明                                                         |
+| ------ | ---- | :----------------------------------------------------------- |
+| upload | 是   | 返回格式 {avatar: xx, path: xx, index: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 组件索引值，需要设置了index属性，默认undefined |
 
 <br/>
 
@@ -64,6 +71,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.1.3 | 删除属性lockWidth/lockHeight<br/>新增控制属性 inner/stretch/lock<br/>新增自动触发子组件方法 fChooseImg(index) |
 | 3.1.2 | 新增控制属性minWidth/minHeight/minScale/maxScale/canRotate/canScale/lockWidth/lockHeight |
 | 3.1.1 | 调整回调返回数据内容，修复小程序报错问题                     |
 | 3.1.0 | 增加index属性，修改回调返回的数据格式                        |
