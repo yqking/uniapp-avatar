@@ -2,7 +2,8 @@
 	<view class="page">
 		<avatar v-for="(v,k) in urls" :index="k" :avatarSrc="v" :key="k"
 			selWidth="350upx" selHeight="350upx" quality="0.8" @upload="myUpload" 
-			avatarStyle="width: 200upx; height: 200upx; border-radius: 50%; margin: 40px">
+			minWidth="200" minHeight="200" minScale="0.5" maxScale="4" canScale="true" canRotate="true" lockHeight="true"
+			avatarStyle="width: 200upx; height: 200upx; border-radius: 100%; margin: 40px">
 		</avatar>
 	</view>
 </template>

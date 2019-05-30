@@ -48,6 +48,17 @@
 			avatarStyle: '',
 			selWidth: '',
 			selHeight: '',
+			minWidth: '',
+			minHeight: '',
+			minScale: '',
+			maxScale: '',
+			canScale: '',
+			canRotate: '',
+			lockWidth: '',
+			lockHeight: '',
+			strech: '',
+			lock: '',
+			inner: '',
 			quality: '',
 			index: '',
 		},
@@ -57,7 +68,12 @@
 			this.ctxCanvasPrv = uni.createCanvasContext('prv-canvas', this);
 			this.qlty = parseInt(this.quality) || 0.9;
 			this.imgSrc.imgSrc = this.avatarSrc;
-			
+			this.letRotate = (this.canRotate === 'false' || this.inner === 'true') ? 0 : 1;
+			this.letScale = this.canScale === 'false' ? 0 : 1;
+			this.isin = this.inner === 'true' ? 1 : 0;
+			this.indx = this.index || undefined;
+			this.mnScale = this.minScale || 0.3;
+			this.maxScale = this.maxScale || 4;
 			uni.showTabBar({
 				complete:(res) => {
 					this.moreHeight = (res.errMsg === 'showTabBar:ok') ? 50 : 0;
@@ -218,7 +234,6 @@
 				prvHeight *= this.pixelRatio;
 				// #endif
 				
-				
 				uni.canvasPutImageData({
 					canvasId: 'prv-canvas',
 					x: prvX,
@@ -337,12 +352,12 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r)=> {
-							r = { index: this.index, path: r, avatar: this.imgSrc };
+							r = { index: this.indx, path: r, avatar: this.imgSrc };
 							this.$emit("upload", r);
 						})
 						// #endif
 						// #ifndef H5
-						r = { index: this.index, path: r, avatar: this.imgSrc };
+						r = { index: this.indx, path: r, avatar: this.imgSrc };
 						this.$emit("upload", r);
 						// #endif
 					},
@@ -397,12 +412,12 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r)=> {
-							r = { index: this.index, path: r, avatar: this.imgSrc };
+							r = { index: this.indx, path: r, avatar: this.imgSrc };
 							this.$emit("upload", r);
 						})
 						// #endif
 						// #ifndef H5
-						r = { index: this.index, path: r, avatar: this.imgSrc };
+						r = { index: this.indx, path: r, avatar: this.imgSrc };
 						this.$emit("upload", r);
 						// #endif
 					},
@@ -525,8 +540,37 @@
 					imgRadio = imgWidth/imgHeight,
 					useWidth = allWidth - 40,
 					useHeight = allHeight - tabHeight - 80,
-					pixelRatio = this.pixelRatio;
-				if( imgRadio < 1 ) {
+					pixelRatio = this.pixelRatio,
+					selWidth = parseInt(this.selStyle.width),
+					selHeight = parseInt(this.selStyle.height);
+				
+				this.fixWidth = 0;
+				this.fixHeight = 0;
+				this.lckWidth = 0;
+				this.lckHeight = 0;
+				switch(this.strech) {
+					case 'x': this.fixWidth = 1; break;
+					case 'y': this.fixHeight = 1; break;
+					case 'long': if(imgRadio > 1) this.fixWidth = 1; else this.fixHeight = 1; break;
+					case 'short': if(imgRadio > 1) this.fixHeight = 1; else this.fixWidth = 1; break;
+					case 'longSel': if(selWidth > selHeight) this.fixWidth = 1; else this.fixHeight = 1; break;
+					case 'shortSel': if(selWidth > selHeight) this.fixHeight = 1; else this.fixWidth = 1; break;
+				}
+				switch(this.lock) {
+					case 'x': this.lckWidth = 1; break;
+					case 'y': this.lckHeight = 1; break;
+					case 'long': if(imgRadio > 1) this.lckWidth = 1; else this.lckHeight = 1; break;
+					case 'short': if(imgRadio > 1) this.lckHeight = 1; else this.lckWidth = 1; break;
+					case 'longSel': if(selWidth > selHeight) this.lckWidth = 1; else this.lckHeight = 1; break;
+					case 'shortSel': if(selWidth > selHeight) this.lckHeight = 1; else this.lckWidth = 1; break;
+				}
+				if( this.fixWidth ) {
+					useWidth = selWidth;
+					useHeight = useWidth/imgRadio;
+				} else if( this.fixHeight ) {
+					useHeight = selHeight;
+					useWidth = useHeight*imgRadio;
+				} else if( imgRadio < 1 ) {
 					if( imgHeight < useHeight ) {
 						useWidth = imgWidth;
 						useHeight = imgHeight;
@@ -543,6 +587,19 @@
 						useHeight = useWidth/imgRadio;
 					}
 				}
+				if( this.isin ) {
+					this.scaleWidth = 0;
+					this.scaleHeight = 0;
+					if(useWidth < selWidth) {
+						useWidth = selWidth;
+						useHeight = useWidth/imgRadio;
+					}
+					if(useHeight < selHeight) {
+						useHeight = selHeight;
+						useWidth = useHeight*imgRadio;
+					}
+				}
+				
 				this.scaleSize = 1;
 				this.rotateDeg = 0;
 				this.posWidth = (allWidth-useWidth)/2;
@@ -568,6 +625,12 @@
 				ctxCanvasOper.fillRect(0, top, left, height);
 				ctxCanvasOper.fillRect(0, top+height, this.windowWidth, this.windowHeight-height-top-tabHeight);
 				ctxCanvasOper.fillRect(left+width, top,this.windowWidth-width-left, height);
+				ctxCanvasOper.setStrokeStyle('red');
+				ctxCanvasOper.moveTo(left+20, top);ctxCanvasOper.lineTo(left, top);ctxCanvasOper.lineTo(left, top+20);
+				ctxCanvasOper.moveTo(left+width-20, top);ctxCanvasOper.lineTo(left+width, top);ctxCanvasOper.lineTo(left+width, top+20);
+				ctxCanvasOper.moveTo(left+20, top+height);ctxCanvasOper.lineTo(left, top+height);ctxCanvasOper.lineTo(left, top+height-20);
+				ctxCanvasOper.moveTo(left+width-20, top+height);ctxCanvasOper.lineTo(left+width, top+height);ctxCanvasOper.lineTo(left+width, top+height-20);
+				ctxCanvasOper.stroke();
 				ctxCanvasOper.draw(false);
 				
 				if( ini ) {
@@ -582,10 +645,14 @@
 					this.fDrawImage();
 				}
 			},
+			fChooseImg(index=undefined) {
+				this.indx = index;
+				this.fSelect();
+			},
 			fSelect() {
 				if(this.fSelecting) return;
 				this.fSelecting = true;
-				setTimeout(()=>{ this.fSelecting = false; }, 500)
+				setTimeout(()=>{ this.fSelecting = false; }, 500);
 				
 				uni.chooseImage({
 					count: 1,
@@ -639,20 +706,44 @@
 				let touches = e.touches,
 					touch0 = touches[0],
 					touch1 = touches[1];
-					
+				
 				if( touch1 ) {
 					let x = touch1.x - touch0.x,
 						y = touch1.y - touch0.y,
 						fgDistance = Math.sqrt(x * x + y * y),
-						scaleSize = 0.005 * (fgDistance - this.fgDistance);
-					if( this.scaleSize + scaleSize > 0.3 && this.scaleSize + scaleSize < 4 ) {
-						this.scaleSize += scaleSize;
-					} 
+						scaleSize = 0.005 * (fgDistance - this.fgDistance),
+						beScaleSize = this.scaleSize + scaleSize;
+						
+					do	{
+						if( !this.letScale ) break;
+						if( this.minWidth && beWidth < this.minWidth ) break;
+						if( this.minHeight && beHeight < this.minHeight ) break;
+						if( beScaleSize < this.mnScale) break;
+						if( beScaleSize > this.mxScale) break;
+						if(this.isin) {
+							let	imgWidth = this.useWidth*beScaleSize,
+								imgHeight = this.useHeight*beScaleSize,
+								rx0 = this.posWidth+this.useWidth/2,
+								ry0 = this.posHeight+this.useHeight/2,
+								l = rx0-imgWidth/2, t = ry0-imgHeight/2,
+								r = l+imgWidth,	    b = t+imgHeight,
+								left = parseInt(this.selStyle.left),
+								top = parseInt(this.selStyle.top),
+								width = parseInt(this.selStyle.width),
+								height = parseInt(this.selStyle.height);
+								if(left < l || left+width > r || top < t || top+height > b) break;
+								this.scaleWidth = (this.useWidth-imgWidth)/2;
+								this.scaleHeight = (this.useHeight-imgHeight)/2;
+						}
+						
+						this.scaleSize = beScaleSize;
+					} while(0);
 					this.fgDistance = fgDistance;
 			
-					if(touch1.x !== touch0.x) {
+					if(touch1.x !== touch0.x && this.letRotate) {
 						x = (this.touch1.y - this.touch0.y)/(this.touch1.x - this.touch0.x);
 						y = (touch1.y - touch0.y)/(touch1.x - touch0.x);
+						// this.rotateDeg += Math.atan((y-x)/(1+x*y)) * 180/Math.PI;
 						this.rotateDeg += Math.atan((y-x)/(1+x*y)) * 180/Math.PI;
 						this.touch0 = touch0;
 						this.touch1 = touch1;
@@ -661,11 +752,44 @@
 					this.fDrawImage();
 				} else if( this.touch0 ) {
 					let x = touch0.x - this.touch0.x,
-						y = touch0.y - this.touch0.y;
-					if( Math.abs(x) < 100 ) this.posWidth  += x;
-					if( Math.abs(y) < 100 ) this.posHeight += y;
-					this.touch0 = touch0;
+						y = touch0.y - this.touch0.y,
+						beX = this.posWidth + x,
+						beY = this.posHeight + y;
+					if(this.isin) {
+						let	imgWidth = this.useWidth*this.scaleSize,
+							imgHeight = this.useHeight*this.scaleSize,
+							rx0 = beX+this.useWidth/2,
+							ry0 = beY+this.useHeight/2,
+							l = rx0-imgWidth/2, t = ry0-imgHeight/2,
+							r = l+imgWidth,	    b = t+imgHeight,
+							left = parseInt(this.selStyle.left),
+							top = parseInt(this.selStyle.top),
+							width = parseInt(this.selStyle.width),
+							height = parseInt(this.selStyle.height);
+							if(!this.lckWidth && Math.abs(x) < 100) {
+								if(left >= l && left+width <= r) {
+									this.posWidth  = beX;
+								} else if(left < l){
+									this.posWidth = left - this.scaleWidth; 
+								} else if(left+width > r) {
+									this.posWidth = left-(imgWidth-width) - this.scaleWidth;
+								}
+							}
+							if(!this.lckHeight && Math.abs(y) < 100) {
+								if(top >= t && top+height <= b) {
+									this.posHeight  = beY;
+								} else if(top < t) {
+									this.posHeight = top - this.scaleHeight;
+								} else if(top+height > b) {
+									this.posHeight = top-(imgHeight-height) - this.scaleHeight;
+								}
+							}
+					} else {
+						if( Math.abs(x) < 100 && !this.lckWidth) this.posWidth  = beX;
+						if( Math.abs(y) < 100 && !this.lckHeight) this.posHeight = beY;
+					}
 					
+					this.touch0 = touch0;
 					this.fDrawImage();
 				}
 			},
@@ -729,6 +853,8 @@
 	.oper-wrapper {
 		height: 50px;
 		position: fixed !important;
+		box-sizing: border-box;
+		border: 1px solid #F1F1F1;
 		background: #ffffff;
 		width: 100%;
 		left: 0;
