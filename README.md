@@ -46,6 +46,7 @@ H5测试
 | avatarSrc   | 否   | 头像地址, 虽然空不会报错，但不方便使用，建议填写             |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
 | inner       | 否   | 只允许在图片范围内移动，并禁用旋转，默认false                |
+| noTab       | 否   | 是否存在tabBar，默认false，主要为了去除报错存信息，不设置也不影响使用 |
 | quality     | 否   | 取值范围0~1，默认0.9                                         |
 | index       | 否   | 回调upload方法，返回该index值，默认undefined                 |
 | minWidth    | 否   | 缩放允许的最小宽度，数值类型，不需要添加单位后缀，默认单位px |
@@ -73,6 +74,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.1.5 | 增加新属性 noTab                                             |
 | 3.1.4 | 增加旋转按钮                                                 |
 | 3.1.3 | 删除属性lockWidth/lockHeight<br/>新增控制属性 inner/stretch/lock<br/>新增自动触发子组件方法 fChooseImg(index) |
 | 3.1.2 | 新增控制属性minWidth/minHeight/minScale/maxScale/canRotate/canScale/lockWidth/lockHeight |
