@@ -1,20 +1,21 @@
 <template name="yq-avatar">
 	<view>
 		<image :src="imgSrc.imgSrc" @click="fSelect" :style="[ imgStyle ]" class="my-avatar"></image>
-		<canvas canvas-id="avatar-factory" class="my-canvas" :style="{top: styleTop, height: cvsStyleHeight}" disable-scroll="false"></canvas>
+		<canvas canvas-id="avatar-canvas" class="my-canvas" :style="{top: styleTop, height: cvsStyleHeight}" disable-scroll="false"></canvas>
 		<canvas canvas-id="oper-canvas" class="oper-canvas" :style="{top: styleTop, height: cvsStyleHeight}" disable-scroll="false" @touchstart="fStart" @touchmove="fMove" @touchend="fEnd"></canvas>
 		<canvas canvas-id="prv-canvas" class="prv-canvas" disable-scroll="false" @touchstart="fHideImg"	:style="{ height: cvsStyleHeight, top: prvTop }"></canvas>
 		<view class="oper-wrapper" :style="{display: styleDisplay}">
 			<view class="oper">
 				<view class="btn-wrapper" v-if="showOper">
-					<view @click="fSelect"  hover-class="hover"><text>重选</text></view>
-					<view @click="fPreview" hover-class="hover"><text>预览</text></view>
-					<view @click="fUpload"  hover-class="hover"><text>上传</text></view>
+					<view @click="fSelect"  hover-class="hover" :style="{width: btnWidth}"><text>重选</text></view>
+					<view @click="fRotate"  hover-class="hover" :style="{width: btnWidth, display: btnDsp}"><text>旋转</text></view>
+					<view @click="fPreview" hover-class="hover" :style="{width: btnWidth}"><text>预览</text></view>
+					<view @click="fUpload"  hover-class="hover" :style="{width: btnWidth}"><text>上传</text></view>
 				</view>
 				<view class="clr-wrapper" v-else>
 					<slider class="my-slider" @change="fColorChange"
 					block-size="25" value="0" min="-100" max="100" activeColor="green" backgroundColor="red" block-color="grey" show-value></slider>
-					<view @click="fPrvUpload"  hover-class="hover"><text>上传</text></view>
+					<view @click="fPrvUpload"  hover-class="hover" :style="{width: btnWidth}"><text>上传</text></view>
 				</view>
 			</view>
 		</view>
@@ -36,6 +37,8 @@
 				imgSrc: {
 					imgSrc: ''
 				},
+				btnWidth: '24%',
+				btnDsp: 'flex',
 			};
 		},
 		watch: {
@@ -58,12 +61,13 @@
 			lockHeight: '',
 			strech: '',
 			lock: '',
+			noTab: '',
 			inner: '',
 			quality: '',
 			index: '',
 		},
 		created() {
-			this.ctxCanvas = uni.createCanvasContext('avatar-factory', this);
+			this.ctxCanvas = uni.createCanvasContext('avatar-canvas', this);
 			this.ctxCanvasOper = uni.createCanvasContext('oper-canvas', this);
 			this.ctxCanvasPrv = uni.createCanvasContext('prv-canvas', this);
 			this.qlty = parseInt(this.quality) || 0.9;
@@ -73,18 +77,24 @@
 			this.isin = this.inner === 'true' ? 1 : 0;
 			this.indx = this.index || undefined;
 			this.mnScale = this.minScale || 0.3;
-			this.maxScale = this.maxScale || 4;
-			uni.showTabBar({
-				complete:(res) => {
-					this.moreHeight = (res.errMsg === 'showTabBar:ok') ? 50 : 0;
-					// uni.onWindowResize(()=>{
-					// 	this.styleDisplay = 'none';
-					// 	this.styleTop = '-10000px';
-					// 	this.fHideImg();
-					// })
-					this.fWindowResize();
-				}
-			});
+			this.mxScale = this.maxScale || 4;
+			this.noBar = this.noTab === 'true' ? 1 : 0;
+			if(this.isin) {
+				this.btnWidth = '30%';
+				this.btnDsp = 'none';
+			}
+			
+			if(this.noBar) {
+				this.moreHeight = 0;
+				this.fWindowResize();
+			} else {
+				uni.showTabBar({
+					complete:(res) => {
+						this.moreHeight = (res.errMsg === 'showTabBar:ok') ? 50 : 0;
+						this.fWindowResize();
+					}
+				});
+			}
 		},
 		methods: {
 			fGetImgData() {
@@ -116,7 +126,7 @@
 			},
 			async fColorChange(e) {
 				let tm_now = Date.now();
-				if(tm_now - this.prvTm < 20) return;
+				if(tm_now - this.prvTm < 100) return;
 				this.prvTm = tm_now;
 				
 				uni.showLoading({ mask: true });
@@ -260,22 +270,26 @@
 				this.pixelRatio = sysInfo.pixelRatio;
 				this.windowWidth = sysInfo.windowWidth;
 				// #ifdef H5
-				this.windowHeight = sysInfo.windowHeight + sysInfo.windowBottom;
 				this.drawTop = sysInfo.windowTop;
+				this.windowHeight = sysInfo.windowHeight + sysInfo.windowBottom;
+				this.cvsStyleHeight = this.windowHeight - tabHeight + 'px';
 				// #endif
 				// #ifdef APP-PLUS
 				if(this.platform === 'android') {
 					this.windowHeight = sysInfo.screenHeight + sysInfo.statusBarHeight;
+					this.cvsStyleHeight = this.windowHeight - tabHeight + 'px';
 				} else {
 					this.windowHeight = sysInfo.windowHeight + this.moreHeight;
+					this.cvsStyleHeight = this.windowHeight - tabHeight + 6 + 'px';
 				}
 				// #endif
 				// #ifdef MP
 				this.windowHeight = sysInfo.windowHeight + this.moreHeight;
+				this.cvsStyleHeight = this.windowHeight - tabHeight - 2 + 'px';
 				// #endif
 				
 				this.pxRatio = this.windowWidth/750;
-				this.cvsStyleHeight = this.windowHeight - tabHeight + 'px';
+				
 				
 				let style = this.avatarStyle;
 				if(style && style !== true && (style=style.trim()) ) {
@@ -345,7 +359,7 @@
 					height: height,
 					destWidth: width,
 					destHeight: height,
-					canvasId: 'avatar-factory',
+					canvasId: 'avatar-canvas',
 					fileType: 'png',
 					quality: this.qlty,
 					success: (r)=>{
@@ -369,7 +383,7 @@
 					},
 					complete: () => {
 						uni.hideLoading();
-						uni.showTabBar();
+						this.noBar || uni.showTabBar();
 					}
 				}, this);
 			},
@@ -429,7 +443,7 @@
 					},
 					complete: () => {
 						uni.hideLoading();
-						uni.showTabBar();
+						this.noBar || uni.showTabBar();
 					}
 				}, this);
 			},
@@ -476,7 +490,7 @@
 					y: y,
 					width: width,
 					height: height,
-					canvasId: 'avatar-factory',
+					canvasId: 'avatar-canvas',
 					fileType: 'png',
 					quality: this.qlty,
 					success: (r)=>{
@@ -649,6 +663,21 @@
 				this.indx = index;
 				this.fSelect();
 			},
+			fRotate() {
+				// #ifdef APP-PLUS
+				if(this.platform === 'android') {
+					if(this.fRotateing) return;
+					this.fRotateing = true;
+					setTimeout(()=>{ this.fRotateing = false; }, 500);
+				}
+				// #endif
+				
+				
+				if(this.letRotate) {
+					this.rotateDeg += 90 - this.rotateDeg%90;
+					this.fDrawImage();
+				}
+			},
 			fSelect() {
 				if(this.fSelecting) return;
 				this.fSelecting = true;
@@ -667,13 +696,19 @@
 								this.imgWidth = r.width;
 								this.imgHeight = r.height;
 								this.path = path;
-								uni.hideTabBar({
-									complete: () => {
-										setTimeout(()=>{
-											this.fDrawInit(true);
-										}, 200);
-									}
-								});
+								if(	this.noBar ) {
+									setTimeout(()=>{
+										this.fDrawInit(true);
+									}, 200);
+								} else {
+									uni.hideTabBar({
+										complete: () => {
+											setTimeout(()=>{
+												this.fDrawInit(true);
+											}, 200);
+										}
+									});
+								}
 							},
 							fail: ()=>{
 								uni.showLoading({
@@ -743,7 +778,6 @@
 					if(touch1.x !== touch0.x && this.letRotate) {
 						x = (this.touch1.y - this.touch0.y)/(this.touch1.x - this.touch0.x);
 						y = (touch1.y - touch0.y)/(touch1.x - touch0.x);
-						// this.rotateDeg += Math.atan((y-x)/(1+x*y)) * 180/Math.PI;
 						this.rotateDeg += Math.atan((y-x)/(1+x*y)) * 180/Math.PI;
 						this.touch0 = touch0;
 						this.touch1 = touch1;
@@ -891,7 +925,6 @@
 		color: #333;
 		border: 1px solid #f1f1f1;
 		border-radius: 6%;
-		width: 30%;
 	}
 	.hover {
 		background: #f1f1f1;
@@ -910,7 +943,6 @@
 		color: #333;
 		border: 1px solid #f1f1f1;
 		border-radius: 6%;
-		width: 30%;
 	}
 	.my-slider {
 		flex-grow: 1;
