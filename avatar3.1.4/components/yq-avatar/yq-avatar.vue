@@ -1,20 +1,21 @@
 <template name="yq-avatar">
 	<view>
 		<image :src="imgSrc.imgSrc" @click="fSelect" :style="[ imgStyle ]" class="my-avatar"></image>
-		<canvas canvas-id="avatar-factory" class="my-canvas" :style="{top: styleTop, height: cvsStyleHeight}" disable-scroll="false"></canvas>
+		<canvas canvas-id="avatar-canvas" class="my-canvas" :style="{top: styleTop, height: cvsStyleHeight}" disable-scroll="false"></canvas>
 		<canvas canvas-id="oper-canvas" class="oper-canvas" :style="{top: styleTop, height: cvsStyleHeight}" disable-scroll="false" @touchstart="fStart" @touchmove="fMove" @touchend="fEnd"></canvas>
 		<canvas canvas-id="prv-canvas" class="prv-canvas" disable-scroll="false" @touchstart="fHideImg"	:style="{ height: cvsStyleHeight, top: prvTop }"></canvas>
 		<view class="oper-wrapper" :style="{display: styleDisplay}">
 			<view class="oper">
 				<view class="btn-wrapper" v-if="showOper">
-					<view @click="fSelect"  hover-class="hover"><text>重选</text></view>
-					<view @click="fPreview" hover-class="hover"><text>预览</text></view>
-					<view @click="fUpload"  hover-class="hover"><text>上传</text></view>
+					<view @click="fSelect"  hover-class="hover" :style="{width: btnWidth}"><text>重选</text></view>
+					<view @click="fRotate"  hover-class="hover" :style="{width: btnWidth, display: btnDsp}"><text>旋转</text></view>
+					<view @click="fPreview" hover-class="hover" :style="{width: btnWidth}"><text>预览</text></view>
+					<view @click="fUpload"  hover-class="hover" :style="{width: btnWidth}"><text>上传</text></view>
 				</view>
 				<view class="clr-wrapper" v-else>
 					<slider class="my-slider" @change="fColorChange"
 					block-size="25" value="0" min="-100" max="100" activeColor="green" backgroundColor="red" block-color="grey" show-value></slider>
-					<view @click="fPrvUpload"  hover-class="hover"><text>上传</text></view>
+					<view @click="fPrvUpload"  hover-class="hover" :style="{width: btnWidth}"><text>上传</text></view>
 				</view>
 			</view>
 		</view>
@@ -36,6 +37,8 @@
 				imgSrc: {
 					imgSrc: ''
 				},
+				btnWidth: '24%',
+				btnDsp: 'flex',
 			};
 		},
 		watch: {
@@ -56,19 +59,28 @@
 			canRotate: '',
 			lockWidth: '',
 			lockHeight: '',
+			strech: '',
+			lock: '',
+			inner: '',
 			quality: '',
 			index: '',
 		},
 		created() {
-			this.ctxCanvas = uni.createCanvasContext('avatar-factory', this);
+			this.ctxCanvas = uni.createCanvasContext('avatar-canvas', this);
 			this.ctxCanvasOper = uni.createCanvasContext('oper-canvas', this);
 			this.ctxCanvasPrv = uni.createCanvasContext('prv-canvas', this);
 			this.qlty = parseInt(this.quality) || 0.9;
 			this.imgSrc.imgSrc = this.avatarSrc;
-			this.letRotate = this.canRotate === 'false' ? 0 : 1;
+			this.letRotate = (this.canRotate === 'false' || this.inner === 'true') ? 0 : 1;
 			this.letScale = this.canScale === 'false' ? 0 : 1;
-			this.fixWidth = this.lockWidth === 'true' ? 1 : 0;
-			this.fixHeight = this.lockHeight === 'true' ? 1 : 0;
+			this.isin = this.inner === 'true' ? 1 : 0;
+			this.indx = this.index || undefined;
+			this.mnScale = this.minScale || 0.3;
+			this.mxScale = this.maxScale || 4;
+			if(this.isin) {
+				this.btnWidth = '30%';
+				this.btnDsp = 'none';
+			}
 			
 			uni.showTabBar({
 				complete:(res) => {
@@ -112,7 +124,7 @@
 			},
 			async fColorChange(e) {
 				let tm_now = Date.now();
-				if(tm_now - this.prvTm < 20) return;
+				if(tm_now - this.prvTm < 100) return;
 				this.prvTm = tm_now;
 				
 				uni.showLoading({ mask: true });
@@ -230,7 +242,6 @@
 				prvHeight *= this.pixelRatio;
 				// #endif
 				
-				
 				uni.canvasPutImageData({
 					canvasId: 'prv-canvas',
 					x: prvX,
@@ -257,22 +268,26 @@
 				this.pixelRatio = sysInfo.pixelRatio;
 				this.windowWidth = sysInfo.windowWidth;
 				// #ifdef H5
-				this.windowHeight = sysInfo.windowHeight + sysInfo.windowBottom;
 				this.drawTop = sysInfo.windowTop;
+				this.windowHeight = sysInfo.windowHeight + sysInfo.windowBottom;
+				this.cvsStyleHeight = this.windowHeight - tabHeight + 'px';
 				// #endif
 				// #ifdef APP-PLUS
 				if(this.platform === 'android') {
 					this.windowHeight = sysInfo.screenHeight + sysInfo.statusBarHeight;
+					this.cvsStyleHeight = this.windowHeight - tabHeight + 'px';
 				} else {
 					this.windowHeight = sysInfo.windowHeight + this.moreHeight;
+					this.cvsStyleHeight = this.windowHeight - tabHeight + 6 + 'px';
 				}
 				// #endif
 				// #ifdef MP
 				this.windowHeight = sysInfo.windowHeight + this.moreHeight;
+				this.cvsStyleHeight = this.windowHeight - tabHeight - 2 + 'px';
 				// #endif
 				
 				this.pxRatio = this.windowWidth/750;
-				this.cvsStyleHeight = this.windowHeight - tabHeight + 'px';
+				
 				
 				let style = this.avatarStyle;
 				if(style && style !== true && (style=style.trim()) ) {
@@ -342,19 +357,19 @@
 					height: height,
 					destWidth: width,
 					destHeight: height,
-					canvasId: 'avatar-factory',
+					canvasId: 'avatar-canvas',
 					fileType: 'png',
 					quality: this.qlty,
 					success: (r)=>{
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r)=> {
-							r = { index: this.index, path: r, avatar: this.imgSrc };
+							r = { index: this.indx, path: r, avatar: this.imgSrc };
 							this.$emit("upload", r);
 						})
 						// #endif
 						// #ifndef H5
-						r = { index: this.index, path: r, avatar: this.imgSrc };
+						r = { index: this.indx, path: r, avatar: this.imgSrc };
 						this.$emit("upload", r);
 						// #endif
 					},
@@ -409,12 +424,12 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r)=> {
-							r = { index: this.index, path: r, avatar: this.imgSrc };
+							r = { index: this.indx, path: r, avatar: this.imgSrc };
 							this.$emit("upload", r);
 						})
 						// #endif
 						// #ifndef H5
-						r = { index: this.index, path: r, avatar: this.imgSrc };
+						r = { index: this.indx, path: r, avatar: this.imgSrc };
 						this.$emit("upload", r);
 						// #endif
 					},
@@ -473,7 +488,7 @@
 					y: y,
 					width: width,
 					height: height,
-					canvasId: 'avatar-factory',
+					canvasId: 'avatar-canvas',
 					fileType: 'png',
 					quality: this.qlty,
 					success: (r)=>{
@@ -540,6 +555,27 @@
 					pixelRatio = this.pixelRatio,
 					selWidth = parseInt(this.selStyle.width),
 					selHeight = parseInt(this.selStyle.height);
+				
+				this.fixWidth = 0;
+				this.fixHeight = 0;
+				this.lckWidth = 0;
+				this.lckHeight = 0;
+				switch(this.strech) {
+					case 'x': this.fixWidth = 1; break;
+					case 'y': this.fixHeight = 1; break;
+					case 'long': if(imgRadio > 1) this.fixWidth = 1; else this.fixHeight = 1; break;
+					case 'short': if(imgRadio > 1) this.fixHeight = 1; else this.fixWidth = 1; break;
+					case 'longSel': if(selWidth > selHeight) this.fixWidth = 1; else this.fixHeight = 1; break;
+					case 'shortSel': if(selWidth > selHeight) this.fixHeight = 1; else this.fixWidth = 1; break;
+				}
+				switch(this.lock) {
+					case 'x': this.lckWidth = 1; break;
+					case 'y': this.lckHeight = 1; break;
+					case 'long': if(imgRadio > 1) this.lckWidth = 1; else this.lckHeight = 1; break;
+					case 'short': if(imgRadio > 1) this.lckHeight = 1; else this.lckWidth = 1; break;
+					case 'longSel': if(selWidth > selHeight) this.lckWidth = 1; else this.lckHeight = 1; break;
+					case 'shortSel': if(selWidth > selHeight) this.lckHeight = 1; else this.lckWidth = 1; break;
+				}
 				if( this.fixWidth ) {
 					useWidth = selWidth;
 					useHeight = useWidth/imgRadio;
@@ -563,6 +599,19 @@
 						useHeight = useWidth/imgRadio;
 					}
 				}
+				if( this.isin ) {
+					this.scaleWidth = 0;
+					this.scaleHeight = 0;
+					if(useWidth < selWidth) {
+						useWidth = selWidth;
+						useHeight = useWidth/imgRadio;
+					}
+					if(useHeight < selHeight) {
+						useHeight = selHeight;
+						useWidth = useHeight*imgRadio;
+					}
+				}
+				
 				this.scaleSize = 1;
 				this.rotateDeg = 0;
 				this.posWidth = (allWidth-useWidth)/2;
@@ -608,10 +657,29 @@
 					this.fDrawImage();
 				}
 			},
+			fChooseImg(index=undefined) {
+				this.indx = index;
+				this.fSelect();
+			},
+			fRotate() {
+				// // #ifdef APP-PLUS
+				// if(this.platform === 'android') {
+				// }
+				// // #endif
+				// 
+					if(this.fRotateing) return;
+					this.fRotateing = true;
+					setTimeout(()=>{ this.fRotateing = false; }, 500);
+				
+				if(this.letRotate) {
+					this.rotateDeg += 90 - this.rotateDeg%90;
+					this.fDrawImage();
+				}
+			},
 			fSelect() {
 				if(this.fSelecting) return;
 				this.fSelecting = true;
-				setTimeout(()=>{ this.fSelecting = false; }, 500)
+				setTimeout(()=>{ this.fSelecting = false; }, 500);
 				
 				uni.chooseImage({
 					count: 1,
@@ -665,23 +733,36 @@
 				let touches = e.touches,
 					touch0 = touches[0],
 					touch1 = touches[1];
-					
+				
 				if( touch1 ) {
 					let x = touch1.x - touch0.x,
 						y = touch1.y - touch0.y,
 						fgDistance = Math.sqrt(x * x + y * y),
 						scaleSize = 0.005 * (fgDistance - this.fgDistance),
-						beScaleSize = this.scaleSize + scaleSize,
-						beWidth = this.imgWidth*beScaleSize,
-						beHeight = this.imgHeight*beScaleSize;
+						beScaleSize = this.scaleSize + scaleSize;
+						
 					do	{
 						if( !this.letScale ) break;
 						if( this.minWidth && beWidth < this.minWidth ) break;
 						if( this.minHeight && beHeight < this.minHeight ) break;
-						if( beScaleSize > 4 ) break;
-						if(!(this.minWidth || this.minHeight) && beScaleSize < 0.3) break;
-						if( this.minScale && beScaleSize < this.minScale) break;
-						if( this.maxScale && beScaleSize > this.maxScale) break;
+						if( beScaleSize < this.mnScale) break;
+						if( beScaleSize > this.mxScale) break;
+						if(this.isin) {
+							let	imgWidth = this.useWidth*beScaleSize,
+								imgHeight = this.useHeight*beScaleSize,
+								rx0 = this.posWidth+this.useWidth/2,
+								ry0 = this.posHeight+this.useHeight/2,
+								l = rx0-imgWidth/2, t = ry0-imgHeight/2,
+								r = l+imgWidth,	    b = t+imgHeight,
+								left = parseInt(this.selStyle.left),
+								top = parseInt(this.selStyle.top),
+								width = parseInt(this.selStyle.width),
+								height = parseInt(this.selStyle.height);
+								if(left < l || left+width > r || top < t || top+height > b) break;
+								this.scaleWidth = (this.useWidth-imgWidth)/2;
+								this.scaleHeight = (this.useHeight-imgHeight)/2;
+						}
+						
 						this.scaleSize = beScaleSize;
 					} while(0);
 					this.fgDistance = fgDistance;
@@ -697,11 +778,44 @@
 					this.fDrawImage();
 				} else if( this.touch0 ) {
 					let x = touch0.x - this.touch0.x,
-						y = touch0.y - this.touch0.y;
-					if( Math.abs(x) < 100 && !this.fixWidth) this.posWidth  += x;
-					if( Math.abs(y) < 100 && !this.fixHeight) this.posHeight += y;
-					this.touch0 = touch0;
+						y = touch0.y - this.touch0.y,
+						beX = this.posWidth + x,
+						beY = this.posHeight + y;
+					if(this.isin) {
+						let	imgWidth = this.useWidth*this.scaleSize,
+							imgHeight = this.useHeight*this.scaleSize,
+							rx0 = beX+this.useWidth/2,
+							ry0 = beY+this.useHeight/2,
+							l = rx0-imgWidth/2, t = ry0-imgHeight/2,
+							r = l+imgWidth,	    b = t+imgHeight,
+							left = parseInt(this.selStyle.left),
+							top = parseInt(this.selStyle.top),
+							width = parseInt(this.selStyle.width),
+							height = parseInt(this.selStyle.height);
+							if(!this.lckWidth && Math.abs(x) < 100) {
+								if(left >= l && left+width <= r) {
+									this.posWidth  = beX;
+								} else if(left < l){
+									this.posWidth = left - this.scaleWidth; 
+								} else if(left+width > r) {
+									this.posWidth = left-(imgWidth-width) - this.scaleWidth;
+								}
+							}
+							if(!this.lckHeight && Math.abs(y) < 100) {
+								if(top >= t && top+height <= b) {
+									this.posHeight  = beY;
+								} else if(top < t) {
+									this.posHeight = top - this.scaleHeight;
+								} else if(top+height > b) {
+									this.posHeight = top-(imgHeight-height) - this.scaleHeight;
+								}
+							}
+					} else {
+						if( Math.abs(x) < 100 && !this.lckWidth) this.posWidth  = beX;
+						if( Math.abs(y) < 100 && !this.lckHeight) this.posHeight = beY;
+					}
 					
+					this.touch0 = touch0;
 					this.fDrawImage();
 				}
 			},
@@ -803,7 +917,6 @@
 		color: #333;
 		border: 1px solid #f1f1f1;
 		border-radius: 6%;
-		width: 30%;
 	}
 	.hover {
 		background: #f1f1f1;
@@ -822,7 +935,6 @@
 		color: #333;
 		border: 1px solid #f1f1f1;
 		border-radius: 6%;
-		width: 30%;
 	}
 	.my-slider {
 		flex-grow: 1;
