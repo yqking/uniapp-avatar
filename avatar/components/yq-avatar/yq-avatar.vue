@@ -14,7 +14,7 @@
 				</view>
 				<view class="clr-wrapper" v-else>
 					<slider class="my-slider" @change="fColorChange"
-					block-size="25" value="0" min="-100" max="100" activeColor="green" backgroundColor="red" block-color="grey" show-value></slider>
+					block-size="25" value="0" min="-100" max="100" activeColor="red" backgroundColor="green" block-color="grey" show-value></slider>
 					<view @click="fPrvUpload"  hover-class="hover" :style="{width: btnWidth}"><text>上传</text></view>
 				</view>
 			</view>
@@ -59,8 +59,9 @@
 			canRotate: '',
 			lockWidth: '',
 			lockHeight: '',
-			strech: '',
+			stretch: '',
 			lock: '',
+			noTab: '',
 			inner: '',
 			quality: '',
 			index: '',
@@ -77,22 +78,23 @@
 			this.indx = this.index || undefined;
 			this.mnScale = this.minScale || 0.3;
 			this.mxScale = this.maxScale || 4;
+			this.noBar = this.noTab === 'true' ? 1 : 0;
 			if(this.isin) {
 				this.btnWidth = '30%';
 				this.btnDsp = 'none';
 			}
 			
-			uni.showTabBar({
-				complete:(res) => {
-					this.moreHeight = (res.errMsg === 'showTabBar:ok') ? 50 : 0;
-					// uni.onWindowResize(()=>{
-					// 	this.styleDisplay = 'none';
-					// 	this.styleTop = '-10000px';
-					// 	this.fHideImg();
-					// })
-					this.fWindowResize();
-				}
-			});
+			if(this.noBar) {
+				this.moreHeight = 0;
+				this.fWindowResize();
+			} else {
+				uni.showTabBar({
+					complete:(res) => {
+						this.moreHeight = (res.errMsg === 'showTabBar:ok') ? 50 : 0;
+						this.fWindowResize();
+					}
+				});
+			}
 		},
 		methods: {
 			fGetImgData() {
@@ -381,7 +383,7 @@
 					},
 					complete: () => {
 						uni.hideLoading();
-						uni.showTabBar();
+						this.noBar || uni.showTabBar();
 					}
 				}, this);
 			},
@@ -441,7 +443,7 @@
 					},
 					complete: () => {
 						uni.hideLoading();
-						uni.showTabBar();
+						this.noBar || uni.showTabBar();
 					}
 				}, this);
 			},
@@ -560,7 +562,7 @@
 				this.fixHeight = 0;
 				this.lckWidth = 0;
 				this.lckHeight = 0;
-				switch(this.strech) {
+				switch(this.stretch) {
 					case 'x': this.fixWidth = 1; break;
 					case 'y': this.fixHeight = 1; break;
 					case 'long': if(imgRadio > 1) this.fixWidth = 1; else this.fixHeight = 1; break;
@@ -662,14 +664,13 @@
 				this.fSelect();
 			},
 			fRotate() {
-				// // #ifdef APP-PLUS
-				// if(this.platform === 'android') {
-				// }
-				// // #endif
-				// 
+				// #ifdef APP-PLUS
+				if(this.platform === 'android') {
 					if(this.fRotateing) return;
 					this.fRotateing = true;
 					setTimeout(()=>{ this.fRotateing = false; }, 500);
+				}
+				// #endif
 				
 				if(this.letRotate) {
 					this.rotateDeg += 90 - this.rotateDeg%90;
@@ -694,13 +695,19 @@
 								this.imgWidth = r.width;
 								this.imgHeight = r.height;
 								this.path = path;
-								uni.hideTabBar({
-									complete: () => {
-										setTimeout(()=>{
-											this.fDrawInit(true);
-										}, 200);
-									}
-								});
+								if(	this.noBar ) {
+									setTimeout(()=>{
+										this.fDrawInit(true);
+									}, 200);
+								} else {
+									uni.hideTabBar({
+										complete: () => {
+											setTimeout(()=>{
+												this.fDrawInit(true);
+											}, 200);
+										}
+									});
+								}
 							},
 							fail: ()=>{
 								uni.showLoading({
