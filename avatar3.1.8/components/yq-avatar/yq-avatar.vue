@@ -8,6 +8,7 @@
 			<view class="oper">
 				<view class="btn-wrapper" v-if="showOper">
 					<view @click="fSelect"  hover-class="hover" :style="{width: btnWidth}"><text>重选</text></view>
+					<view @click="fClose"  hover-class="hover" :style="{width: btnWidth}"><text>关闭</text></view>
 					<view @click="fRotate"  hover-class="hover" :style="{width: btnWidth, display: btnDsp}"><text>旋转</text></view>
 					<view @click="fPreview" hover-class="hover" :style="{width: btnWidth}"><text>预览</text></view>
 					<view @click="fUpload"  hover-class="hover" :style="{width: btnWidth}"><text>上传</text></view>
@@ -33,11 +34,12 @@
 				styleTop: '-10000px',
 				prvTop: '-10000px',
 				imgStyle: {},
+				selStyle: {},
 				showOper: true,
 				imgSrc: {
 					imgSrc: ''
 				},
-				btnWidth: '24%',
+				btnWidth: '19%',
 				btnDsp: 'flex',
 			};
 		},
@@ -51,8 +53,8 @@
 			avatarStyle: '',
 			selWidth: '',
 			selHeight: '',
-			minWidth: '',
-			minHeight: '',
+			expWidth: '',
+			expHeight: '',
 			minScale: '',
 			maxScale: '',
 			canScale: '',
@@ -80,7 +82,7 @@
 			this.mxScale = this.maxScale || 4;
 			this.noBar = this.noTab === 'true' ? 1 : 0;
 			if(this.isin) {
-				this.btnWidth = '30%';
+				this.btnWidth = '24%';
 				this.btnDsp = 'none';
 			}
 			
@@ -133,7 +135,7 @@
 				
 				if( !this.prvImgData ) {
 					if( !(this.prvImgData = await this.fGetImgData().catch((res)=>{
-						uni.showLoading({
+						uni.showToast({
 							title: "error_read",
 							duration: 2000,
 						})
@@ -243,7 +245,6 @@
 				prvWidth *= this.pixelRatio;
 				prvHeight *= this.pixelRatio;
 				// #endif
-				
 				uni.canvasPutImageData({
 					canvasId: 'prv-canvas',
 					x: prvX,
@@ -251,15 +252,13 @@
 					width: prvWidth,
 					height: prvHeight,
 					data: target,
-					success(res) {
-					},
 					fail() {
-						uni.showLoading({
+						uni.showToast({
 							title: 'error_put',
 							duration: 2000
 						})
 					},
-					complete(res) {
+					complete() {
 						uni.hideLoading();
 					}
 				}, this);
@@ -287,9 +286,7 @@
 				this.windowHeight = sysInfo.windowHeight + this.moreHeight;
 				this.cvsStyleHeight = this.windowHeight - tabHeight - 2 + 'px';
 				// #endif
-				
 				this.pxRatio = this.windowWidth/750;
-				
 				
 				let style = this.avatarStyle;
 				if(style && style !== true && (style=style.trim()) ) {
@@ -313,14 +310,8 @@
 					this.imgStyle = obj;
 				}
 				
-				style = this.selStyle || {};
-				if( this.selWidth && this.selHeight ) {
-					style.width  = this.selWidth.indexOf('upx')  >= 0 ? parseInt(this.selWidth)  * this.pxRatio + 'px' : this.selWidth;
-					style.height = this.selHeight.indexOf('upx') >= 0 ? parseInt(this.selHeight) * this.pxRatio + 'px' : this.selHeight;
-				}
-				style.top = (this.windowHeight - parseInt(style.height) - tabHeight)/2 + 'px';
-				style.left = (this.windowWidth - parseInt(style.width))/2 + 'px';
-				this.selStyle = style;
+				this.expWidth && (this.exportWidth = this.expWidth.indexOf('upx') >= 0 ? parseInt(this.expWidth)*this.pxRatio : parseInt(this.expWidth));
+				this.expHeight && (this.exportHeight = this.expHeight.indexOf('upx') >= 0 ? parseInt(this.expHeight)*this.pxRatio : parseInt(this.expHeight));
 				
 				if(this.styleDisplay === 'flex') {
 					setTimeout(()=>{
@@ -345,20 +336,18 @@
 				y *= this.pixelRatio;
 				// #endif
 					
-				uni.showLoading({
-					mask: true
-				});
-				
+				uni.showLoading({ mask: true });
 				this.styleDisplay = 'none';
 				this.styleTop = '-10000px';
+				this.hasSel = false;
 				this.fHideImg();
 				uni.canvasToTempFilePath({
 					x: x,
 					y: y,
 					width: width,
 					height: height,
-					destWidth: width,
-					destHeight: height,
+					destWidth: this.exportWidth || width,
+					destHeight: this.exportHeight || height,
 					canvasId: 'avatar-canvas',
 					fileType: 'png',
 					quality: this.qlty,
@@ -366,17 +355,15 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r)=> {
-							r = { index: this.indx, path: r, avatar: this.imgSrc };
-							this.$emit("upload", r);
+							this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
 						})
 						// #endif
 						// #ifndef H5
-						r = { index: this.indx, path: r, avatar: this.imgSrc };
-						this.$emit("upload", r);
+						this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
 						// #endif
 					},
 					fail: ()=>{
-						uni.showLoading({
+						uni.showToast({
 							title: "error1",
 							duration: 2000,
 						})
@@ -405,20 +392,19 @@
 				prvY *= this.pixelRatio;
 				// #endif
 					
-				uni.showLoading({
-					mask: true
-				});
+				uni.showLoading({ mask: true });
+				
 				this.styleDisplay = 'none';
 				this.styleTop = '-10000px';
+				this.hasSel = false;
 				this.fHideImg();
-				
 				uni.canvasToTempFilePath({
 					x: prvX,
 					y: prvY,
 					width: prvWidth,
 					height: prvHeight,
-					destWidth: prvWidth,
-					destHeight: prvHeight,
+					destWidth: this.exportWidth || prvWidth,
+					destHeight: this.exportHeight || prvHeight,
 					canvasId: 'prv-canvas',
 					fileType: 'png',
 					quality: this.qlty,
@@ -426,17 +412,15 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r)=> {
-							r = { index: this.indx, path: r, avatar: this.imgSrc };
-							this.$emit("upload", r);
+							this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
 						})
 						// #endif
 						// #ifndef H5
-						r = { index: this.indx, path: r, avatar: this.imgSrc };
-						this.$emit("upload", r);
+						this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
 						// #endif
 					},
 					fail: ()=>{
-						uni.showLoading({
+						uni.showToast({
 							title: "error_prv",
 							duration: 2000,
 						})
@@ -466,6 +450,12 @@
 				this.prvImgData = null;
 				this.target = null;
 			},
+			fClose() {
+				this.styleDisplay = 'none';
+				this.styleTop = '-10000px';
+				this.hasSel = false;
+				this.fHideImg();
+			},
 			fPreview() {
 				if(this.fPreviewing) return;
 				this.fPreviewing = true;
@@ -482,9 +472,8 @@
 				y *= this.pixelRatio;
 				// #endif
 				
-				uni.showLoading({
-					mask: true
-				});
+				uni.showLoading({ mask: true });
+				
 				uni.canvasToTempFilePath({
 					x: x,
 					y: y,
@@ -536,7 +525,7 @@
 						// #endif
 					},
 					fail: ()=>{
-						uni.showLoading({
+						uni.showToast({
 							title: "error2",
 							duration: 2000,
 						})
@@ -607,10 +596,12 @@
 					if(useWidth < selWidth) {
 						useWidth = selWidth;
 						useHeight = useWidth/imgRadio;
+						this.lckHeight = 0;
 					}
 					if(useHeight < selHeight) {
 						useHeight = selHeight;
 						useWidth = useHeight*imgRadio;
+						this.lckWidth = 0;
 					}
 				}
 				
@@ -659,7 +650,22 @@
 					this.fDrawImage();
 				}
 			},
-			fChooseImg(index=undefined) {
+			fChooseImg(index=undefined, params=undefined, data=undefined) {
+				if(params) {
+					let selWidth = params.selWidth,
+						selHeight = params.selHeight;
+						
+					if( selWidth && selHeight) {
+						selWidth  = selWidth.indexOf('upx')  >= 0 ? parseInt(selWidth)  * this.pxRatio: parseInt(selWidth);
+						selHeight = selHeight.indexOf('upx') >= 0 ? parseInt(selHeight) * this.pxRatio: parseInt(selHeight);
+						this.selStyle.width = selWidth + 'px';
+						this.selStyle.height = selHeight + 'px';
+						this.selStyle.top = (this.windowHeight - selHeight - tabHeight)/2 + 'px';
+						this.selStyle.left = (this.windowWidth - selWidth)/2 + 'px';
+						this.hasSel = true;
+					}
+				}
+				this.rtn = data;
 				this.indx = index;
 				this.fSelect();
 			},
@@ -695,6 +701,25 @@
 								this.imgWidth = r.width;
 								this.imgHeight = r.height;
 								this.path = path;
+								if( !this.hasSel ) {
+									let style = this.selStyle || {};
+									if( this.selWidth && this.selHeight ) {
+										let selWidth  = this.selWidth.indexOf('upx')  >= 0 ? parseInt(this.selWidth)  * this.pxRatio: parseInt(this.selWidth),
+											selHeight = this.selHeight.indexOf('upx') >= 0 ? parseInt(this.selHeight) * this.pxRatio: parseInt(this.selHeight);
+										style.width = selWidth + 'px';
+										style.height = selHeight + 'px';
+										style.top = (this.windowHeight - selHeight - tabHeight)/2 + 'px';
+										style.left = (this.windowWidth - selWidth)/2 + 'px';
+									} else {
+										uni.showModal({
+											title: '裁剪框的宽或高没有设置',
+											showCancel: false
+										})
+										return;
+									}
+									this.selStyle = style;
+								}
+								
 								if(	this.noBar ) {
 									setTimeout(()=>{
 										this.fDrawInit(true);
@@ -710,7 +735,7 @@
 								}
 							},
 							fail: ()=>{
-								uni.showLoading({
+								uni.showToast({
 									title: "error3",
 									duration: 2000,
 								})
@@ -750,8 +775,6 @@
 						
 					do	{
 						if( !this.letScale ) break;
-						if( this.minWidth && beWidth < this.minWidth ) break;
-						if( this.minHeight && beHeight < this.minHeight ) break;
 						if( beScaleSize < this.mnScale) break;
 						if( beScaleSize > this.mxScale) break;
 						if(this.isin) {

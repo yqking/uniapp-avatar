@@ -19,7 +19,6 @@
 		methods: {
 			myUpload(rsp) {
             	rsp.avatar.imgSrc = rsp.path;
-				// this.$set(this.urls, rsp.index, rsp.path);
 				
 				// uni.uploadFile({
 				// 	url: '',
