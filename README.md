@@ -45,8 +45,8 @@ H5测试
 | selHeight   | 是   | 裁剪区域的高                                                 |
 | avatarSrc   | 否   | 头像地址                                                     |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
-| expWidth    | f否  | 设置导出宽度，H5平台暂不支持                                 |
-| expHeight   | f否  | 设置导出高度，H5平台暂不支持                                 |
+| expWidth    | 否  | 设置导出宽度，H5平台暂不支持                                 |
+| expHeight   | 否  | 设置导出高度，H5平台暂不支持                                 |
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
 | quality     | 否   | 生成图片质量，取值范围0~1，默认0.9                           |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
