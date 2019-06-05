@@ -45,6 +45,8 @@ H5测试
 | selHeight   | 是   | 裁剪区域的高                                                 |
 | avatarSrc   | 否   | 头像地址                                                     |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
+| expWidth    | f否  | 设置导出宽度，H5平台暂不支持                                 |
+| expHeight   | f否  | 设置导出高度，H5平台暂不支持                                 |
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
 | quality     | 否   | 生成图片质量，取值范围0~1，默认0.9                           |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
@@ -77,6 +79,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.1.9 | 修复直接关闭不显示tabBar问题                                 |
 | 3.1.8 | 修复提示bug                                                  |
 | 3.1.7 | fChooseImg增加调用参数params/data，upload返回对象增加data字段<br/>删除minWidth/minHeight属性<br/>增加关闭按钮<br/>修复图片过小时采用inner无法移动问题 |
 | 3.1.6 | 修复stretch属性                                              |
