@@ -455,6 +455,7 @@
 				this.styleTop = '-10000px';
 				this.hasSel = false;
 				this.fHideImg();
+				this.noBar || uni.showTabBar();
 			},
 			fPreview() {
 				if(this.fPreviewing) return;
