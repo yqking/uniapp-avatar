@@ -4,21 +4,23 @@ H5测试
 
 <img src='http://www.snyvic.eu/static/m.png'/>
 
+<br/>用法一
+
 ```
 //template部分
     <avatar	
-        selWidth="200px" selHeight="400upx" @upload="myUpload" :avatarSrc="url"
-        avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;">
-    </avatar>
+    	selWidth="200px" selHeight="400upx" @upload="myUpload" :avatarSrc="url"
+		avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;">
+	</avatar>
 
 //script部分
     import avatar from "../../components/yq-avatar/yq-avatar.vue";
     export default {
-    	data() {
+        data() {
             return {
                 url: "../../static/logo.png"
             }
-        },      
+        },
         methods: {
             myUpload(rsp) {
                 this.url = rsp.path; //更新头像方式一
@@ -31,11 +33,34 @@ H5测试
     }
 ```
 
+<br/>用法二
 
+```
+//template部分
+<image :src="url" @click="clk(index)"></image>
+<avatar @upload="myUpload" ref="avatar"></avatar>
 
-用法<br/>
-点击头像或自定义触发方式，选择图片进行缩放、旋转、裁剪。既可以直接上传，也可以美化后上传<br/>
-单头像建议直接使用avatar，如果多个图片裁剪，建议使用一个，回调函数返回图片路径后自行处理<br/>
+//script部分
+    import avatar from "../../components/yq-avatar/yq-avatar.vue";
+    export default {
+    	data() {
+			return {
+				url: "../../static/logo.png"
+			}
+		},
+        methods: {
+            myUpload(rsp) {
+            	this.url = rsp.path;
+            },
+            clk(index) {
+            	this.$refs.avatar.fChooseImg(index,{selWidth: "300upx", selHeight: "300upx"});
+            }
+        }，
+        components: {
+            avatar
+        }
+    }
+```
 
 <br/>
 
@@ -45,14 +70,12 @@ H5测试
 | selHeight   | 是   | 裁剪区域的高                                                 |
 | avatarSrc   | 否   | 头像地址                                                     |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
-| expWidth    | 否  | 设置导出宽度，H5平台暂不支持                                 |
-| expHeight   | 否  | 设置导出高度，H5平台暂不支持                                 |
+| expWidth    | 否   | 设置导出的图片宽度                                           |
+| expHeight   | 否   | 设置导出的图片高度                                           |
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
 | quality     | 否   | 生成图片质量，取值范围0~1，默认0.9                           |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
 | noTab       | 否   | 是否存在tabBar，默认false，主要为了去除报错存信息，不设置也不影响使用 |
-| minWidth    | 否   | 缩放允许的最小宽度，数值类型，不需要添加单位后缀，默认单位px |
-| minHeight   | 否   | 缩放允许的最小高度，数值类型，不需要添加单位后缀，默认单位px |
 | minScale    | 否   | 缩放允许的最小比例，默认0.3                                  |
 | maxScale    | 否   | 缩放允许的最大比例，默认4                                    |
 | canRotate   | 否   | 是否允许旋转，默认true                                       |
@@ -64,12 +87,12 @@ H5测试
 
 | 事件   | 必须 | 说明                                                         |
 | ------ | ---- | :----------------------------------------------------------- |
-| upload | 是   | 返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/><br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined |
+| upload | 是   | 返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined |
 <br/>
 
 | ref可调用方法                   | 说明                                                         |
 | ------------------------------- | ------------------------------------------------------------ |
-| fChooseImg(index, params, data) | 触发图片选择<br/>index: 索引，默认undefined<br/>params, 初始化参数，默认undefined<br/>{<br/>selWidth: "xx",  //裁剪框宽度<br/>selHeight: "xx",  //裁剪框高度<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined |
+| fChooseImg(index, params, data) | 触发图片选择<br/>index: 索引，默认undefined<br/>params, 初始化参数，默认undefined<br/> {<br/>selWidth: "xx",  //裁剪框宽度<br/>selHeight: "xx",  //裁剪框高度<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined |
 
 <br/>
 
@@ -79,6 +102,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.2.0 | 加深颜色凸显裁剪框、增加expWidth/expHeight设置导出大小       |
 | 3.1.9 | 修复直接关闭不显示tabBar问题                                 |
 | 3.1.8 | 修复提示bug                                                  |
 | 3.1.7 | fChooseImg增加调用参数params/data，upload返回对象增加data字段<br/>删除minWidth/minHeight属性<br/>增加关闭按钮<br/>修复图片过小时采用inner无法移动问题 |
