@@ -314,9 +314,7 @@
 				this.expHeight && (this.exportHeight = this.expHeight.indexOf('upx') >= 0 ? parseInt(this.expHeight)*this.pxRatio : parseInt(this.expHeight));
 				
 				if(this.styleDisplay === 'flex') {
-					setTimeout(()=>{
-						this.fDrawInit(true);
-					}, 200);
+					this.fDrawInit(true);
 				}
 				this.fHideImg();
 			},
@@ -329,11 +327,15 @@
 					x = parseInt(style.left),
 					y = parseInt(style.top),
 					width = parseInt(style.width),
-					height = parseInt(style.height);
+					height = parseInt(style.height),
+					expWidth = this.exportWidth || width,
+					expHeight = this.exportHeight || height;
 					
 				// #ifdef H5
 				x *= this.pixelRatio;
 				y *= this.pixelRatio;
+				expWidth = width;
+				expHeight = height;
 				// #endif
 					
 				uni.showLoading({ mask: true });
@@ -346,8 +348,8 @@
 					y: y,
 					width: width,
 					height: height,
-					destWidth: this.exportWidth || width,
-					destHeight: this.exportHeight || height,
+					destWidth: expWidth,
+					destHeight: expHeight,
 					canvasId: 'avatar-canvas',
 					fileType: 'png',
 					quality: this.qlty,
@@ -355,7 +357,40 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r)=> {
-							this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
+							if(this.exportWidth && this.exportHeight) {
+								let ctxCanvas = this.ctxCanvas;
+								expWidth = this.exportWidth,
+								expHeight = this.exportHeight;
+									
+								ctxCanvas.drawImage(r, 0, 0, expWidth, expHeight);
+								ctxCanvas.draw(false,()=>{
+									uni.canvasToTempFilePath({
+										x: 0,
+										y: 0,
+										width: expWidth,
+										height: expHeight,
+										destWidth: expWidth,
+										destHeight: expHeight,
+										canvasId: 'avatar-canvas',
+										fileType: 'png',
+										quality: this.qlty,
+										success: (r)=>{
+											r = r.tempFilePath;
+											this.btop(r).then((r)=> {
+												this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
+											});
+										},
+										fail: ()=>{
+											uni.showToast({
+												title: "error0",
+												duration: 2000,
+											})
+										}
+									});
+								});
+							} else {
+								this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
+							}
 						})
 						// #endif
 						// #ifndef H5
@@ -385,11 +420,15 @@
 					prvX = this.prvX,
 					prvY = this.prvY,
 					prvWidth = this.prvWidth,
-					prvHeight = this.prvHeight;
+					prvHeight = this.prvHeight,
+					expWidth = this.exportWidth || prvWidth,
+					expHeight = this.exportHeight || prvHeight;
 					
 				// #ifdef H5
 				prvX *= this.pixelRatio;
 				prvY *= this.pixelRatio;
+				expWidth = prvWidth;
+				expHeight = prvHeight;
 				// #endif
 					
 				uni.showLoading({ mask: true });
@@ -403,8 +442,8 @@
 					y: prvY,
 					width: prvWidth,
 					height: prvHeight,
-					destWidth: this.exportWidth || prvWidth,
-					destHeight: this.exportHeight || prvHeight,
+					destWidth: expWidth,
+					destHeight: expHeight,
 					canvasId: 'prv-canvas',
 					fileType: 'png',
 					quality: this.qlty,
@@ -412,7 +451,40 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r)=> {
-							this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
+							if(this.exportWidth && this.exportHeight) {
+								let ctxCanvas = this.ctxCanvas;
+								expWidth = this.exportWidth,
+								expHeight = this.exportHeight;
+									
+								ctxCanvas.drawImage(r, 0, 0, expWidth, expHeight);
+								ctxCanvas.draw(false, ()=>{
+									uni.canvasToTempFilePath({
+										x: 0,
+										y: 0,
+										width: expWidth,
+										height: expHeight,
+										destWidth: expWidth,
+										destHeight: expHeight,
+										canvasId: 'avatar-canvas',
+										fileType: 'png',
+										quality: this.qlty,
+										success: (r)=>{
+											r = r.tempFilePath;
+											this.btop(r).then((r)=> {
+												this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
+											});
+										},
+										fail: ()=>{
+											uni.showToast({
+												title: "error0",
+												duration: 2000,
+											})
+										}
+									});
+								});
+							} else {
+								this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
+							}
 						})
 						// #endif
 						// #ifndef H5
@@ -624,8 +696,8 @@
 					ctxCanvasOper = this.ctxCanvasOper;
 				ctxCanvasOper.setLineWidth(3);
 				ctxCanvasOper.setStrokeStyle('grey');
-				ctxCanvasOper.setGlobalAlpha(0.3);
-				ctxCanvasOper.setFillStyle('grey');
+				ctxCanvasOper.setGlobalAlpha(0.4);
+				ctxCanvasOper.setFillStyle('black');
 				ctxCanvasOper.strokeRect( left, top, width, height );
 				ctxCanvasOper.fillRect(0, 0, this.windowWidth, top);
 				ctxCanvasOper.fillRect(0, top, left, height);
@@ -637,19 +709,19 @@
 				ctxCanvasOper.moveTo(left+20, top+height);ctxCanvasOper.lineTo(left, top+height);ctxCanvasOper.lineTo(left, top+height-20);
 				ctxCanvasOper.moveTo(left+width-20, top+height);ctxCanvasOper.lineTo(left+width, top+height);ctxCanvasOper.lineTo(left+width, top+height-20);
 				ctxCanvasOper.stroke();
-				ctxCanvasOper.draw(false);
-				
-				if( ini ) {
-					this.styleDisplay = 'flex';
-					// #ifdef H5
-					this.styleTop = this.drawTop + 'px';
-					// #endif
-					// #ifndef H5
-					this.styleTop = '0';
-					// #endif
-					ctxCanvas.setFillStyle('black');
-					this.fDrawImage();
-				}
+				ctxCanvasOper.draw(false, ()=>{
+					if( ini ) {
+						this.styleDisplay = 'flex';
+						// #ifdef H5
+						this.styleTop = this.drawTop + 'px';
+						// #endif
+						// #ifndef H5
+						this.styleTop = '0';
+						// #endif
+						ctxCanvas.setFillStyle('black');
+						this.fDrawImage();
+					}
+				});
 			},
 			fChooseImg(index=undefined, params=undefined, data=undefined) {
 				if(params) {
@@ -722,15 +794,11 @@
 								}
 								
 								if(	this.noBar ) {
-									setTimeout(()=>{
-										this.fDrawInit(true);
-									}, 200);
+									this.fDrawInit(true);
 								} else {
 									uni.hideTabBar({
 										complete: () => {
-											setTimeout(()=>{
-												this.fDrawInit(true);
-											}, 200);
+											this.fDrawInit(true);
 										}
 									});
 								}
