@@ -1,5 +1,7 @@
 示例说明(可以直接去github下载项目运行, 有问题或讨论方法，请撩924515629)
 
+注意：android4.4之前的版本，uniapp部分函数有bug，请使用高版本进行测试
+
 H5测试
 
 <img src='http://www.snyvic.eu/static/m.png'/>
@@ -23,8 +25,8 @@ H5测试
         },
         methods: {
             myUpload(rsp) {
-                this.url = rsp.path; //更新头像方式一
-                //rsp.avatar.imgSrc = rsp.path; //更新头像方式二
+            	this.url = rsp.path; //更新头像方式一
+            	//rsp.avatar.imgSrc = rsp.path; //更新头像方式二
             }
         }，
         components: {
@@ -43,11 +45,11 @@ H5测试
 //script部分
     import avatar from "../../components/yq-avatar/yq-avatar.vue";
     export default {
-    	data() {
-			return {
-				url: "../../static/logo.png"
-			}
-		},
+        data() {
+            return {
+                url: "../../static/logo.png"
+            }
+        },
         methods: {
             myUpload(rsp) {
             	this.url = rsp.path;
@@ -85,14 +87,15 @@ H5测试
 
 <br/>
 
-| 事件   | 必须 | 说明                                                         |
-| ------ | ---- | :----------------------------------------------------------- |
-| upload | 是   | 返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined |
+| 事件    | 必须 | 说明                                                         |
+| ------- | ---- | :----------------------------------------------------------- |
+| upload  | 是   | <p align="left">在点击上传后调用<br/>返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined </p>|
+| avtinit | 否   | 在图片选择后调用，可用于自定义操作，例如禁用下拉刷新，点击上传后再启用 |
 <br/>
 
 | ref可调用方法                   | 说明                                                         |
 | ------------------------------- | ------------------------------------------------------------ |
-| fChooseImg(index, params, data) | 触发图片选择<br/>index: 索引，默认undefined<br/>params, 初始化参数，默认undefined<br/> {<br/>selWidth: "xx",  //裁剪框宽度<br/>selHeight: "xx",  //裁剪框高度<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined |
+| fChooseImg(index, params, data) | <p align="left">触发图片选择<br/>index: 索引，默认undefined<br/>params, 初始化参数，默认undefined，可设置属性有selWidth、selHeight、expWidth、expHeight、quality、canRotate、canScale、inner、minScale、maxScale、stretch、lock、noTab<br/> 例如{<br/>selWidth: "xx",  //裁剪框宽度<br/>selHeight: "xx",  //裁剪框高度<br/>。。。<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined </p>|
 
 <br/>
 
@@ -102,6 +105,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.2.1 | 增加自定义前置操作avtinit，增加fChooseImg函数可设置的部分自定义属性 |
 | 3.2.0 | 加深颜色凸显裁剪框、增加expWidth/expHeight设置导出大小       |
 | 3.1.9 | 修复直接关闭不显示tabBar问题                                 |
 | 3.1.8 | 修复提示bug                                                  |
