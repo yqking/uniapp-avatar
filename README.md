@@ -10,8 +10,8 @@ H5测试
 
 ```
 //template部分
-    <avatar	
-    	selWidth="200px" selHeight="400upx" @upload="myUpload" :avatarSrc="url"
+	<avatar	
+		selWidth="200px" selHeight="400upx" @upload="myUpload" :avatarSrc="url"
 		avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;">
 	</avatar>
 
