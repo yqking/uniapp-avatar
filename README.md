@@ -6,14 +6,16 @@ H5测试
 
 <img src='http://www.snyvic.eu/static/m.png'/>
 
-<br/>用法一
+<br/>
+
+如果单页面使用多个裁剪框，建议使用方法二<br/>用法一
 
 ```
 //template部分
-	<avatar	
-		selWidth="200px" selHeight="400upx" @upload="myUpload" :avatarSrc="url"
-		avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;">
-	</avatar>
+    <avatar	
+        selWidth="200px" selHeight="400upx" @upload="myUpload" :avatarSrc="url"
+        avatarStyle="width: 200upx; height: 200upx; border-radius: 100%;">
+    </avatar>
 
 //script部分
     import avatar from "../../components/yq-avatar/yq-avatar.vue";
@@ -39,23 +41,27 @@ H5测试
 
 ```
 //template部分
-<image :src="url" @click="clk(index)"></image>
-<avatar @upload="myUpload" ref="avatar"></avatar>
+    <image :src="urls[0]" @click="clk(0)"></image>
+    <image :src="urls[1]" @click="clk(1)"></image>
+    <avatar @upload="myUpload" ref="avatar"></avatar>
 
 //script部分
     import avatar from "../../components/yq-avatar/yq-avatar.vue";
     export default {
         data() {
             return {
-                url: "../../static/logo.png"
+                urls: ["../../static/logo.png","../../static/logo.png"]
             }
         },
         methods: {
             myUpload(rsp) {
-            	this.url = rsp.path;
+            	this.$set(this.urls, rsp.index, rsp.path);
             },
             clk(index) {
-            	this.$refs.avatar.fChooseImg(index,{selWidth: "300upx", selHeight: "300upx"});
+                this.$refs.avatar.fChooseImg(index,{
+                    selWidth: "300upx", selHeight: "300upx",
+                    expWidth: '260upx', expHeight: '260upx'
+                });
             }
         }，
         components: {
@@ -95,7 +101,7 @@ H5测试
 
 | ref可调用方法                   | 说明                                                         |
 | ------------------------------- | ------------------------------------------------------------ |
-| fChooseImg(index, params, data) | <p align="left">触发图片选择<br/>index: 索引，默认undefined<br/>params, 初始化参数，默认undefined，可设置属性有selWidth、selHeight、expWidth、expHeight、quality、canRotate、canScale、inner、minScale、maxScale、stretch、lock、noTab<br/> 例如{<br/>selWidth: "xx",  //裁剪框宽度<br/>selHeight: "xx",  //裁剪框高度<br/>。。。<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined </p>|
+| fChooseImg(index, params, data) | <p align="left">触发图片选择<br/>index: 索引，默认undefined<br/>params, 初始化参数，默认undefined，可设置属性有selWidth、selHeight、expWidth、expHeight、quality、canRotate、canScale、minScale、maxScale、stretch、lock<br/> 例如{<br/>selWidth: "xx",  //裁剪框宽度<br/>selHeight: "xx",  //裁剪框高度<br/>。。。<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined </p> |
 
 <br/>
 
@@ -105,6 +111,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.2.2 | 禁用旋转后还可以通过按钮进行90°旋转，修改fChooseImg可设置属性 |
 | 3.2.1 | 增加自定义前置操作avtinit，增加fChooseImg函数可设置的部分自定义属性 |
 | 3.2.0 | 加深颜色凸显裁剪框、增加expWidth/expHeight设置导出大小       |
 | 3.1.9 | 修复直接关闭不显示tabBar问题                                 |
