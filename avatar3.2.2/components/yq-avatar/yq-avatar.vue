@@ -81,6 +81,8 @@
 			this.mnScale = this.minScale || 0.3;
 			this.mxScale = this.maxScale || 4;
 			this.noBar = this.noTab === 'true' ? 1 : 0;
+			this.stc = this.stretch;
+			this.lck = this.lock;
 			if(this.isin) {
 				this.btnWidth = '24%';
 				this.btnDsp = 'none';
@@ -318,6 +320,66 @@
 				}
 				this.fHideImg();
 			},
+			fSelect() {
+				if(this.fSelecting) return;
+				this.fSelecting = true;
+				setTimeout(()=>{ this.fSelecting = false; }, 500);
+				
+				uni.chooseImage({
+					count: 1,
+					sizeType: ['original', 'compressed'],
+					sourceType: ['album', 'camera'],
+					success: (r)=>{
+						uni.showLoading({ mask: true });
+						let path = this.imgPath = r.tempFilePaths[0];
+						uni.getImageInfo({
+							src: path,
+							success: r => {
+								this.imgWidth = r.width;
+								this.imgHeight = r.height;
+								this.path = path;
+								if( !this.hasSel ) {
+									let style = this.selStyle || {};
+									if( this.selWidth && this.selHeight ) {
+										let selWidth  = this.selWidth.indexOf('upx')  >= 0 ? parseInt(this.selWidth)  * this.pxRatio: parseInt(this.selWidth),
+											selHeight = this.selHeight.indexOf('upx') >= 0 ? parseInt(this.selHeight) * this.pxRatio: parseInt(this.selHeight);
+										style.width = selWidth + 'px';
+										style.height = selHeight + 'px';
+										style.top = (this.windowHeight - selHeight - tabHeight)/2 + 'px';
+										style.left = (this.windowWidth - selWidth)/2 + 'px';
+									} else {
+										uni.showModal({
+											title: '裁剪框的宽或高没有设置',
+											showCancel: false
+										})
+										return;
+									}
+									this.selStyle = style;
+								}
+								
+								if(	this.noBar ) {
+									this.fDrawInit(true);
+								} else {
+									uni.hideTabBar({
+										complete: () => {
+											this.fDrawInit(true);
+										}
+									});
+								}
+							},
+							fail: ()=>{
+								uni.showToast({
+									title: "error3",
+									duration: 2000,
+								})
+							},
+							complete() {
+								uni.hideLoading();
+							}
+						});
+					}
+				})
+			},
 			fUpload() {
 				if(this.fUploading)	return;
 				this.fUploading = true;
@@ -397,7 +459,7 @@
 						this.$emit("upload", {avatar: this.imgSrc, path: r, index: this.indx, data: this.rtn});
 						// #endif
 					},
-					fail: ()=>{
+					fail: (res)=>{
 						uni.showToast({
 							title: "error1",
 							duration: 2000,
@@ -624,7 +686,7 @@
 				this.fixHeight = 0;
 				this.lckWidth = 0;
 				this.lckHeight = 0;
-				switch(this.stretch) {
+				switch(this.stc) {
 					case 'x': this.fixWidth = 1; break;
 					case 'y': this.fixHeight = 1; break;
 					case 'long': if(imgRadio > 1) this.fixWidth = 1; else this.fixHeight = 1; break;
@@ -632,7 +694,7 @@
 					case 'longSel': if(selWidth > selHeight) this.fixWidth = 1; else this.fixHeight = 1; break;
 					case 'shortSel': if(selWidth > selHeight) this.fixHeight = 1; else this.fixWidth = 1; break;
 				}
-				switch(this.lock) {
+				switch(this.lck) {
 					case 'x': this.lckWidth = 1; break;
 					case 'y': this.lckHeight = 1; break;
 					case 'long': if(imgRadio > 1) this.lckWidth = 1; else this.lckHeight = 1; break;
@@ -709,8 +771,10 @@
 				ctxCanvasOper.moveTo(left+20, top+height);ctxCanvasOper.lineTo(left, top+height);ctxCanvasOper.lineTo(left, top+height-20);
 				ctxCanvasOper.moveTo(left+width-20, top+height);ctxCanvasOper.lineTo(left+width, top+height);ctxCanvasOper.lineTo(left+width, top+height-20);
 				ctxCanvasOper.stroke();
+				
 				ctxCanvasOper.draw(false, ()=>{
 					if( ini ) {
+						
 						this.styleDisplay = 'flex';
 						// #ifdef H5
 						this.styleTop = this.drawTop + 'px';
@@ -722,12 +786,33 @@
 						this.fDrawImage();
 					}
 				});
+				
+				this.$emit("avtinit");
 			},
 			fChooseImg(index=undefined, params=undefined, data=undefined) {
 				if(params) {
 					let selWidth = params.selWidth,
-						selHeight = params.selHeight;
-						
+						selHeight = params.selHeight,
+						expWidth = params.expWidth,
+						expHeight = params.expHeight,
+						quality = params.quality,
+						canRotate = params.canRotate,
+						canScale = params.canScale,
+						minScale = params.minScale,
+						maxScale = params.maxScale,
+						stretch = params.stretch,
+						lock = params.lock;
+					
+					expWidth && (this.exportWidth = expWidth.indexOf('upx') >= 0 ? parseInt(expWidth)*this.pxRatio : parseInt(expWidth));
+					expHeight && (this.exportHeight = expHeight.indexOf('upx') >= 0 ? parseInt(expHeight)*this.pxRatio : parseInt(expHeight));
+					this.letRotate = (canRotate === 'false' || inner === 'true') ? 0 : 1;
+					this.letScale = canScale === 'false' ? 0 : 1;
+					this.qlty = parseInt(quality) || 0.9;
+					this.mnScale = minScale || 0.3;
+					this.mxScale = maxScale || 4;
+					this.stc = stretch;
+					this.lck = lock;
+					
 					if( selWidth && selHeight) {
 						selWidth  = selWidth.indexOf('upx')  >= 0 ? parseInt(selWidth)  * this.pxRatio: parseInt(selWidth);
 						selHeight = selHeight.indexOf('upx') >= 0 ? parseInt(selHeight) * this.pxRatio: parseInt(selHeight);
@@ -751,70 +836,10 @@
 				}
 				// #endif
 				
-				if(this.letRotate) {
+				// if(this.letRotate) {
 					this.rotateDeg += 90 - this.rotateDeg%90;
 					this.fDrawImage();
-				}
-			},
-			fSelect() {
-				if(this.fSelecting) return;
-				this.fSelecting = true;
-				setTimeout(()=>{ this.fSelecting = false; }, 500);
-				
-				uni.chooseImage({
-					count: 1,
-					sizeType: ['original', 'compressed'],
-					sourceType: ['album', 'camera'],
-					success: (r)=>{
-						uni.showLoading({ mask: true });
-						let path = this.imgPath = r.tempFilePaths[0];
-						uni.getImageInfo({
-							src: path,
-							success: r => {
-								this.imgWidth = r.width;
-								this.imgHeight = r.height;
-								this.path = path;
-								if( !this.hasSel ) {
-									let style = this.selStyle || {};
-									if( this.selWidth && this.selHeight ) {
-										let selWidth  = this.selWidth.indexOf('upx')  >= 0 ? parseInt(this.selWidth)  * this.pxRatio: parseInt(this.selWidth),
-											selHeight = this.selHeight.indexOf('upx') >= 0 ? parseInt(this.selHeight) * this.pxRatio: parseInt(this.selHeight);
-										style.width = selWidth + 'px';
-										style.height = selHeight + 'px';
-										style.top = (this.windowHeight - selHeight - tabHeight)/2 + 'px';
-										style.left = (this.windowWidth - selWidth)/2 + 'px';
-									} else {
-										uni.showModal({
-											title: '裁剪框的宽或高没有设置',
-											showCancel: false
-										})
-										return;
-									}
-									this.selStyle = style;
-								}
-								
-								if(	this.noBar ) {
-									this.fDrawInit(true);
-								} else {
-									uni.hideTabBar({
-										complete: () => {
-											this.fDrawInit(true);
-										}
-									});
-								}
-							},
-							fail: ()=>{
-								uni.showToast({
-									title: "error3",
-									duration: 2000,
-								})
-							},
-							complete() {
-								uni.hideLoading();
-							}
-						});
-					}
-				})
+				// }
 			},
 			fStart(e) {
 				let touches = e.touches,

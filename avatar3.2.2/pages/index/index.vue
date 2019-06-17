@@ -1,11 +1,11 @@
 <template>
 	<view>
-	<avatar @upload="myUpload" expWidth="300px" expHeight="300px" ref="avatar"></avatar>
+	<avatar @upload="myUpload" ref="avatar" @avtinit="doBefore"></avatar>
 	<image :src="url" style="width: 200upx; height: 200upx; border-radius: 100%; margin: 40px" @click="clk(1)"></image> 
 
 	<avatar 
-		selWidth="350upx" selHeight="350upx" expWidth="300px" expHeight="300px" ref='avatar'
-		:avatarSrc="url" @upload="myUpload" inner="true"
+		selWidth="350upx" selHeight="350upx" expWidth="300px" expHeight="300px"
+		:avatarSrc="url" @upload="myUpload" inner="true" canRotate="false"
 		avatarStyle="width: 200upx; height: 200upx; border-radius: 0 !important; margin: 40px">
 	</avatar>
 	</view>
@@ -20,6 +20,9 @@
 			}
 		},
 		methods: {
+			doBefore() {
+				console.log('do something else');
+			},
 			clk(index) {
 				this.$refs.avatar.fChooseImg(index,{selWidth: '350upx', selHeight: '350upx'})
 			},
@@ -27,7 +30,7 @@
 				this.url = rsp.path;
 				//rsp.avatar.imgSrc = rsp.path;
 				
-				uni.uploadFile({
+				/*uni.uploadFile({
 					url: '', //仅为示例，非真实的接口地址
 					filePath: rsp.path,
 					name: 'avatar',
@@ -40,8 +43,7 @@
 					complete(res) {
 						console.log(res)
 					}
-				});
-				
+				});*/
 			}
 		},
 		components: {
