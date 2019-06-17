@@ -798,24 +798,21 @@
 						quality = params.quality,
 						canRotate = params.canRotate,
 						canScale = params.canScale,
-						inner = params.inner,
 						minScale = params.minScale,
 						maxScale = params.maxScale,
 						stretch = params.stretch,
-						lock = params.lock,
-						noTab = params.noTab;
+						lock = params.lock;
 					
 					expWidth && (this.exportWidth = expWidth.indexOf('upx') >= 0 ? parseInt(expWidth)*this.pxRatio : parseInt(expWidth));
 					expHeight && (this.exportHeight = expHeight.indexOf('upx') >= 0 ? parseInt(expHeight)*this.pxRatio : parseInt(expHeight));
-					this.letRotate = (canRotate === 'false' || inner === 'true') ? 0 : 1;
+					this.letRotate = canRotate === 'false' ? 0 : 1;
 					this.letScale = canScale === 'false' ? 0 : 1;
-					this.noBar = noTab === 'true' ? 1 : 0;
 					this.qlty = parseInt(quality) || 0.9;
-					this.isin = inner === 'true' ? 1 : 0;
 					this.mnScale = minScale || 0.3;
 					this.mxScale = maxScale || 4;
 					this.stc = stretch;
 					this.lck = lock;
+					
 					if( selWidth && selHeight) {
 						selWidth  = selWidth.indexOf('upx')  >= 0 ? parseInt(selWidth)  * this.pxRatio: parseInt(selWidth);
 						selHeight = selHeight.indexOf('upx') >= 0 ? parseInt(selHeight) * this.pxRatio: parseInt(selHeight);
@@ -839,10 +836,10 @@
 				}
 				// #endif
 				
-				if(this.letRotate) {
+				// if(this.letRotate) {
 					this.rotateDeg += 90 - this.rotateDeg%90;
 					this.fDrawImage();
-				}
+				// }
 			},
 			fStart(e) {
 				let touches = e.touches,
