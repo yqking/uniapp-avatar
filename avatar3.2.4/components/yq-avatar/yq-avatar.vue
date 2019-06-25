@@ -87,7 +87,7 @@
 				this.btnWidth = '24%';
 				this.btnDsp = 'none';
 			} else {
-				this.btnWidth = '19';
+				this.btnWidth = '19%';
 				this.btnDsp = 'flex';
 			}
 			
@@ -657,7 +657,7 @@
 						this.btnWidth = '24%';
 						this.btnDsp = 'none';
 					} else {
-						this.btnWidth = '19';
+						this.btnWidth = '19%';
 						this.btnDsp = 'flex';
 					}
 					
