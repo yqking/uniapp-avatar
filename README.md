@@ -1,12 +1,15 @@
 示例说明(可以直接去github下载项目运行, 有问题或讨论方法，请撩924515629)
 
-注意：android4.4之前的版本，uniapp部分函数有bug，请使用高版本进行测试
+注意:
+1)  android4.4之前的版本，uniapp部分函数有bug，请使用高版本进行测试
+
+2)  H5平台需要根据文件类型添加后缀
 
 H5测试
 
-<img src='http://www.snyvic.eu/static/m.png'/>
+<img src='http://www.snyvic.eu/public/static/m.png'/>
 
-<br/>
+
 
 如果单页面使用多个裁剪框，建议使用方法二<br/>用法一
 
@@ -78,10 +81,11 @@ H5测试
 | selHeight   | 是   | 裁剪区域的高                                                 |
 | avatarSrc   | 否   | 头像地址                                                     |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
+| bgImg       | 否   | 剪切背景图片，默认黑色背景                                   |
 | expWidth    | 否   | 设置导出的图片宽度                                           |
 | expHeight   | 否   | 设置导出的图片高度                                           |
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
-| quality     | 否   | 生成图片质量，取值范围0~1，默认0.9                           |
+| quality     | 否   | 生成图片质量，取值范围0~1，默认1                             |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
 | noTab       | 否   | 是否存在tabBar，默认false，主要为了去除报错存信息，不设置也不影响使用 |
 | minScale    | 否   | 缩放允许的最小比例，默认0.3                                  |
@@ -95,13 +99,14 @@ H5测试
 
 | 事件    | 必须 | 说明                                                         |
 | ------- | ---- | :----------------------------------------------------------- |
-| upload  | 是   | <p align="left">在点击上传后调用<br/>返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined </p>|
+| upload  | 是   | <p align="left">在点击上传后调用<br/>返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined </p> |
 | avtinit | 否   | 在图片选择后调用，可用于自定义操作，例如禁用下拉刷新，点击上传后再启用 |
+
 <br/>
 
 | ref可调用方法                   | 说明                                                         |
 | ------------------------------- | ------------------------------------------------------------ |
-| fChooseImg(index, params, data) | <p align="left">触发图片选择<br/>index: 索引，默认undefined<br/>params, 对象类型，默认undefined，可设置属性有selWidth、selHeight、expWidth、expHeight、quality、canRotate、canScale、minScale、maxScale、stretch、lock<br/> 例如{<br/>    selWidth: "xx",  //裁剪框宽度<br/>    selHeight: "xx",  //裁剪框高度<br/>    。。。<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined </p> |
+| fChooseImg(index, params, data) | <p align="left">触发图片选择<br/>index: 索引，默认undefined<br/>params, 对象类型，默认undefined，可设置属性有selWidth、selHeight、expWidth、expHeight、quality、canRotate、canScale、minScale、maxScale、stretch、lock、inner<br/> 例如{<br/>    selWidth: "xx",  //裁剪框宽度<br/>    selHeight: "xx",  //裁剪框高度<br/>    。。。<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined </p> |
 
 <br/>
 
@@ -111,6 +116,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.2.5 | 根据反馈，修复已知的bug；增加背景图片参数bgImg               |
 | 3.2.4 | fChooseImg函数可修改inner属性                                |
 | 3.2.3 | 禁用旋转后还可以通过按钮进行90°旋转，修改fChooseImg可设置属性 |
 | 3.2.1 | 增加自定义前置操作avtinit，增加fChooseImg函数可设置的部分自定义属性 |
