@@ -6,8 +6,7 @@
 2)  H5平台需要根据文件类型添加后缀
 
 H5测试
-
-<img src='http://www.snyvic.eu/public/static/m.png'/>
+http://www.snyvic.eu/#/
 
 
 
