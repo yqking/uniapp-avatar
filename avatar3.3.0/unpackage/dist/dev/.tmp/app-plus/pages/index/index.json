@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "avatar": "/components/yq-avatar/yq-avatar"
+  }
+}
