@@ -6,8 +6,8 @@
 2)  H5平台需要根据文件类型添加后缀
 
 H5测试
-http://www.snyvic.eu/#/
 
+![image](https://github.com/yqking/uniapp-avatar/blob/master/qr.png)
 
 
 如果单页面使用多个裁剪框，建议使用方法二<br/>用法一
