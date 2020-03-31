@@ -585,8 +585,8 @@
 								prvWidth *= radio;
 								prvHeight = useHeight;
 							}
-						// ctxCanvasPrv.setFillStyle('black');
-						// ctxCanvasPrv.fillRect(0, 0, prvX, prvY);
+						ctxCanvasPrv.setFillStyle('black');
+						ctxCanvasPrv.fillRect(0, 0, prvX, prvY);
 						// ctxCanvasPrv.drawImage(this.bgImage, 0, 0, prvX, prvY); 预览显示背景图
 						this.prvX = prvX = (prvX-prvWidth)/2;
 						this.prvY = prvY = (prvY-prvHeight)/2;
