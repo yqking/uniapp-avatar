@@ -10,9 +10,10 @@
 
 4）使用头像页面需要禁用最新的v3编译模式
 
-H5测试
+H5测试地址
 
-<img src='http://www.snyvic.eu/public/static/m.png'/>
+
+![image](https://github.com/yqking/uniapp-avatar/blob/master/qr.png)
 
 <br/><br/>
 
