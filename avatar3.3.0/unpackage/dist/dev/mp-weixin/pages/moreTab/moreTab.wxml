@@ -1,1 +1,0 @@
-<view><button data-event-opts="{{[['tap',[['upload',['$event']]]]]}}" style="width:80%;height:60px;" bindtap="__e">上传</button></view>

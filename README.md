@@ -1,14 +1,26 @@
-示例说明(可以直接去github下载项目运行, 由于最近工作繁忙可能无法及时回复，敬请谅解)
+示例说明(可以直接去github下载项目运行, 有问题或讨论方法，请撩924515629)
 
-注意:
+注意：
+
 1)  android4.4之前的版本，uniapp部分函数有bug，请使用高版本进行测试
 
 2)  H5平台需要根据文件类型添加后缀
 
+3)  百度小程序使用头像的页面，需要在页面style里配置 "disableScroll": true
+
+4）使用头像页面需要禁用最新的v3编译模式
+
 H5测试
 
-![image](https://github.com/yqking/uniapp-avatar/blob/master/qr.png)
+<img src='http://www.snyvic.eu/public/static/m.png'/>
 
+<br/><br/>
+
+感谢如下用户信息反馈，为组件优化提供宝贵意见和建议
+
+ 393747897@qq.com，caomeiyouren@qq.com
+
+<br/><br/>
 
 如果单页面使用多个裁剪框，建议使用方法二<br/>用法一
 
@@ -45,6 +57,7 @@ H5测试
 //template部分
     <image :src="urls[0]" @click="clk(0)"></image>
     <image :src="urls[1]" @click="clk(1)"></image>
+    <button @click="clk(0)">按钮触发<button>
     <avatar @upload="myUpload" ref="avatar"></avatar>
 
 //script部分
@@ -81,8 +94,8 @@ H5测试
 | avatarSrc   | 否   | 头像地址                                                     |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
 | bgImg       | 否   | 剪切背景图片，默认黑色背景                                   |
-| expWidth    | 否   | 设置导出的图片宽度                                           |
-| expHeight   | 否   | 设置导出的图片高度                                           |
+| expWidth    | 否   | 设置导出图片宽度，实际宽度=该值*像素密度。默认值selWidth     |
+| expHeight   | 否   | 设置导出图片高度，实际高度=该值*像素密度。默认值selHeight    |
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
 | quality     | 否   | 生成图片质量，取值范围0~1，默认1                             |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
@@ -98,9 +111,8 @@ H5测试
 
 | 事件    | 必须 | 说明                                                         |
 | ------- | ---- | :----------------------------------------------------------- |
-| upload  | 是   | <p align="left">在点击上传后调用<br/>返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined </p> |
+| upload  | 是   | <p align="left">在点击上传后调用<br/>返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined </p>|
 | avtinit | 否   | 在图片选择后调用，可用于自定义操作，例如禁用下拉刷新，点击上传后再启用 |
-
 <br/>
 
 | ref可调用方法                   | 说明                                                         |
@@ -115,6 +127,7 @@ H5测试
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.3.1 | 优化缩放、移动操作，修复expWidth、expHeight错误设置导致图片不清晰bug |
 | 3.3.0 | 增加对支付宝小程序支持                                       |
 | 3.2.6 | 修复小程序预览，底图继续显示bug                              |
 | 3.2.5 | 根据反馈，修复已知的bug；增加背景图片参数bgImg               |
@@ -145,4 +158,12 @@ H5测试
 | 1.0.2 | 修改按钮栏样式                                               |
 | 1.0.1 | 修改按钮栏高度                                               |
 | 1.0.0 | 增加H5支持                                                   |
+
+
+
+
+
+
+
+
 
