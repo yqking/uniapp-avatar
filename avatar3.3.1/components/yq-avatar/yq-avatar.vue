@@ -598,9 +598,18 @@
 					imgHeight = this.useHeight*this.scaleSize,
 					cx = this.focusX*this.scaleSize-this.focusX,
 					cy = this.focusY*this.scaleSize-this.focusY;
-					
+				
+				// #ifdef MP-ALIPAY	
+				ctxCanvas.save();
+				// #endif
+				
 				if(this.bgImage) {
+					// #ifdef MP-ALIPAY
+					ctxCanvas.fillRect(0, 0, this.windowWidth, this.windowHeight-tabHeight);
+					// #endif
+					// #ifndef MP-ALIPAY
 					ctxCanvas.drawImage(this.bgImage, 0, 0, this.windowWidth, this.windowHeight-tabHeight);
+					// #endif
 				} else {
 					ctxCanvas.fillRect(0, 0, this.windowWidth, this.windowHeight-tabHeight);
 				}
@@ -609,7 +618,7 @@
 				ctxCanvas.rotate(this.rotateDeg * Math.PI/180);
 				ctxCanvas.drawImage(this.imgPath, this.posWidth-this.centerX-cx, this.posHeight-this.centerY-cy, imgWidth, imgHeight);
 				
-				// #ifndef MP-ALIPAY
+				
 				if(ini){
 					setTimeout(()=>{
 						ctxCanvas.draw(true,()=>{
@@ -619,12 +628,9 @@
 				} else {
 					ctxCanvas.draw(false);
 				}
-				// #endif
+				
 				// #ifdef MP-ALIPAY
-				ctxCanvas.draw(false);
-				// ctxCanvas.scale(1/this.scaleSize, 1/this.scaleSize);
-				ctxCanvas.rotate(-this.rotateDeg * Math.PI/180);
-				ctxCanvas.translate(-this.centerX, -this.centerY);
+				ctxCanvas.restore();
 				// #endif
 			},
 			fPreview() {
@@ -674,13 +680,13 @@
 								prvWidth *= radio;
 								prvHeight = useHeight;
 							}
-						ctxCanvasPrv.setFillStyle('black');
+						// ctxCanvasPrv.setFillStyle('black');
 						ctxCanvasPrv.fillRect(0, 0, prvX, prvY);
 						// ctxCanvasPrv.drawImage(this.bgImage, 0, 0, prvX, prvY); 预览显示背景图
-						this.prvX = prvX = (prvX-prvWidth)/2;
-						this.prvY = prvY = (prvY-prvHeight)/2;
-						this.prvWidth = prvWidth;
-						this.prvHeight = prvHeight;
+						this.prvX = prvX = ((prvX-prvWidth)/2)|0;
+						this.prvY = prvY = ((prvY-prvHeight)/2)|0;
+						this.prvWidth = prvWidth = prvWidth|0;
+						this.prvHeight = prvHeight = prvHeight|0;
 						ctxCanvasPrv.drawImage(r, prvX, prvY, prvWidth, prvHeight);
 						ctxCanvasPrv.draw(false);
 						
@@ -743,12 +749,11 @@
 						
 						// ctxCanvasPrv.setFillStyle('black');
 						ctxCanvasPrv.fillRect(0, 0, prvX, prvY);
-						
 						// ctxCanvasPrv.drawImage(this.bgImage, 0, 0, prvX, prvY); 预览显示背景图
-						this.prvX = prvX = (prvX-prvWidth)/2;
-						this.prvY = prvY = (prvY-prvHeight)/2;
-						this.prvWidth = prvWidth;
-						this.prvHeight = prvHeight;
+						this.prvX = prvX = ((prvX-prvWidth)/2)|0;
+						this.prvY = prvY = ((prvY-prvHeight)/2)|0;
+						this.prvWidth = prvWidth = prvWidth|0;
+						this.prvHeight = prvHeight = prvHeight|0;
 						ctxCanvasPrv.drawImage(r, prvX, prvY, prvWidth, prvHeight);
 						ctxCanvasPrv.draw(false);
 						
@@ -757,6 +762,11 @@
 							this.showOper = false;
 							this.prvTop = this.drawTop + 'px';
 						})
+						// #endif
+						
+						// #ifdef MP-WEIXIN
+						this.showOper = false;
+						this.prvTop = '0';
 						// #endif
 						
 						// #ifdef APP-PLUS
@@ -768,11 +778,6 @@
 							this.showOper = false;
 							this.prvTop = '0';
 						}
-						// #endif
-						
-						// #ifdef MP-WEIXIN
-						this.showOper = false;
-						this.prvTop = '0';
 						// #endif
 						
 						// #ifndef H5||MP-WEIXIN||APP-PLUS
@@ -1156,8 +1161,8 @@
 				
 				let prvX = this.prvX,
 					prvY = this.prvY,
-					prvWidth = this.prvWidth|0,
-					prvHeight = this.prvHeight|0;
+					prvWidth = this.prvWidth,
+					prvHeight = this.prvHeight;
 					
 				// #ifdef MP-ALIPAY
 				this.ctxCanvasPrv.putImageData({

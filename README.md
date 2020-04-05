@@ -8,9 +8,9 @@
 
 3)  百度小程序使用头像的页面，需要在页面style里配置 "disableScroll": true
 
-4）使用头像页面需要禁用最新的v3编译模式
+4)  使用头像页面需要禁用最新的v3编译模式
 
-H5测试
+H5测试地址
 
 <img src='http://www.snyvic.eu/public/static/m.png'/>
 
