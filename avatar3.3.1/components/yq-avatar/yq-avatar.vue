@@ -567,6 +567,11 @@
 				ctxCanvasOper.setStrokeStyle('grey');
 				ctxCanvasOper.setGlobalAlpha(0.4);
 				ctxCanvasOper.strokeRect( left, top, width, height );
+				ctxCanvasOper.setFillStyle('grey');
+				ctxCanvasOper.fillRect(0, 0, this.windowWidth, top);
+				ctxCanvasOper.fillRect(0, top, left, height);
+				ctxCanvasOper.fillRect(0, top+height, this.windowWidth, this.windowHeight-height-top-tabHeight);
+				ctxCanvasOper.fillRect(left+width, top,this.windowWidth-width-left, height);
 				ctxCanvasOper.setStrokeStyle('red');
 				ctxCanvasOper.moveTo(left+20, top);ctxCanvasOper.lineTo(left, top);ctxCanvasOper.lineTo(left, top+20);
 				ctxCanvasOper.moveTo(left+width-20, top);ctxCanvasOper.lineTo(left+width, top);ctxCanvasOper.lineTo(left+width, top+20);
