@@ -598,11 +598,19 @@
 				let tm_now = Date.now();
 				if(tm_now - this.drawTm < 20) return;
 				this.drawTm = tm_now;
+				
 				let ctxCanvas = this.ctxCanvas,
 					imgWidth = this.useWidth*this.scaleSize,
 					imgHeight = this.useHeight*this.scaleSize,
-					cx = this.focusX*this.scaleSize-this.focusX,
-					cy = this.focusY*this.scaleSize-this.focusY;
+					cx = this.focusX*(this.scaleSize - 1),
+					cy = this.focusY*(this.scaleSize - 1),
+					d = this.rotateDeg * Math.PI/180,
+					posWidth = this.posWidth - this.centerX - cx,
+					posHeight = this.posHeight - this.centerY - cy,
+					tmp = posWidth;
+					
+				posWidth = posWidth*Math.cos(-d) - posHeight*Math.sin(-d);
+				posHeight = tmp*Math.sin(-d) + posHeight*Math.cos(-d);
 				
 				// #ifdef MP-ALIPAY	
 				ctxCanvas.save();
@@ -620,9 +628,8 @@
 				}
 				
 				ctxCanvas.translate(this.centerX, this.centerY);
-				ctxCanvas.rotate(this.rotateDeg * Math.PI/180);
-				ctxCanvas.drawImage(this.imgPath, this.posWidth-this.centerX-cx, this.posHeight-this.centerY-cy, imgWidth, imgHeight);
-				
+				ctxCanvas.rotate(d);
+				ctxCanvas.drawImage(this.imgPath, posWidth, posHeight, imgWidth, imgHeight);
 				
 				if(ini){
 					setTimeout(()=>{
@@ -854,6 +861,11 @@
 			fRotate() {
 				// if(this.letRotate) {
 					this.rotateDeg += 90 - this.rotateDeg%90;
+					let cx = this.focusX*(this.scaleSize - 1),
+						cy = this.focusY*(this.scaleSize - 1),
+						tmp = this.posWidth;
+					this.posWidth = this.centerX + cx - this.posHeight + this.centerY + cy;
+					this.posHeight = this.centerY + cy + tmp - this.centerX - cx;
 					this.fDrawImage();
 				// }
 			},
