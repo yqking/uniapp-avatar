@@ -10,8 +10,7 @@
 
 H5测试地址
 
-
-![image](https://github.com/yqking/uniapp-avatar/blob/master/qr.png)
+![image](http://www.snyvic.eu/public/static/m.png)
 
 <br/><br/>
 
@@ -109,15 +108,16 @@ H5测试地址
 
 <br/>
 
-| 事件    | 必须 | 说明                                                         |
-| ------- | ---- | :----------------------------------------------------------- |
-| upload  | 是   | <p align="left">在点击上传后调用<br/>返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined<br/>base64: 当前只有H5平台有base64格式图片</p> |
-| avtinit | 否   | 在图片选择后调用，可用于自定义操作，例如禁用下拉刷新，点击上传后再启用 |
+| 事件属性 | 必须 | 参数说明                                                     |
+| -------- | ---- | :----------------------------------------------------------- |
+| upload   | 是   | <p align="left">点击上传后回调<br/>{<br/>avatar：对象类型，可以通过更新imgSrc值，更新头像<br/>path：临时头像地址<br/>index：图片索引<br/>data：通过fChooseImg函数设置的额外数据，默认undefined<br/>base64：当前只有H5平台有base64格式图片<br/>}</p> |
+| avtinit  | 否   | 在图片选择后调用，可用于自定义操作，例如禁用下拉刷新，点击上传后再启用 |
+
 <br/>
 
-| ref可调用方法                   | 说明                                                         |
+| ref可调用方法                   | 参数说明                                                     |
 | ------------------------------- | ------------------------------------------------------------ |
-| fChooseImg(index, params, data) | <p align="left">触发图片选择<br/>index: 索引，默认undefined<br/>params, 对象类型，默认undefined，可设置属性有selWidth、selHeight、expWidth、expHeight、quality、canRotate、canScale、minScale、maxScale、stretch、lock、inner<br/> 例如{<br/>    selWidth: "xx",  //裁剪框宽度<br/>    selHeight: "xx",  //裁剪框高度<br/>    。。。<br/>}<br/>data, 回调返回的额外数据，可以是任何类型，默认undefined </p> |
+| fChooseImg(index, params, data) | <p align="left">触发图片选着<br/>index：索引，默认undefined<br/>params：对象类型，默认undefined，可设置属性有selWidth、selHeight、<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expWidth、expHeight、quality、canRotate、canScale、minScale、<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxScale、stretch、lock、inner<br/>data：回调时的额外数据，可以是任何类型，默认undefined </p> |
 
 <br/>
 
