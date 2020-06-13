@@ -16,7 +16,7 @@ H5测试地址
 
 感谢如下用户信息反馈，为组件优化提供宝贵意见和建议
 
- 393747897@qq.com、caomeiyouren@qq.com、enson
+ 393747897@qq.com、caomeiyouren@qq.com、enson、lionxiong
 
 <br/><br/>
 
