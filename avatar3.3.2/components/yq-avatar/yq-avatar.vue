@@ -679,7 +679,18 @@
 				ctxCanvasOper.fillRect(left + width, top, this.windowWidth - width - left, height);
 				
 				ctxCanvasOper.setLineWidth(3);
+<<<<<<< HEAD:avatar3.3.2/components/yq-avatar/yq-avatar.vue
 				ctxCanvasOper.setGlobalAlpha(1);
+=======
+				ctxCanvasOper.setStrokeStyle('grey');
+				ctxCanvasOper.setGlobalAlpha(0.4);
+				ctxCanvasOper.strokeRect( left, top, width, height );
+				ctxCanvasOper.setFillStyle('grey');
+				ctxCanvasOper.fillRect(0, 0, this.windowWidth, top);
+				ctxCanvasOper.fillRect(0, top, left, height);
+				ctxCanvasOper.fillRect(0, top+height, this.windowWidth, this.windowHeight-height-top-tabHeight);
+				ctxCanvasOper.fillRect(left+width, top,this.windowWidth-width-left, height);
+>>>>>>> 51d026170c931379e351981ce96086f4fbaeafb0:avatar3.3.1/components/yq-avatar/yq-avatar.vue
 				ctxCanvasOper.setStrokeStyle('red');
 				ctxCanvasOper.moveTo(left+15, top-2);
 				ctxCanvasOper.lineTo(left-2, top-2);
@@ -714,12 +725,29 @@
 				let tm_now = Date.now();
 				if (tm_now - this.drawTm < 20) return;
 				this.drawTm = tm_now;
+<<<<<<< HEAD:avatar3.3.2/components/yq-avatar/yq-avatar.vue
 
 				let ctxCanvas = this.ctxCanvas,
 					imgWidth = this.useWidth * this.scaleSize,
 					imgHeight = this.useHeight * this.scaleSize,
 					d = this.rotateDeg * Math.PI / 180;
 
+=======
+				
+				let ctxCanvas = this.ctxCanvas,
+					imgWidth = this.useWidth*this.scaleSize,
+					imgHeight = this.useHeight*this.scaleSize,
+					cx = this.focusX*(this.scaleSize - 1),
+					cy = this.focusY*(this.scaleSize - 1),
+					d = this.rotateDeg * Math.PI/180,
+					posWidth = this.posWidth - this.centerX - cx,
+					posHeight = this.posHeight - this.centerY - cy,
+					tmp = posWidth;
+					
+				posWidth = posWidth*Math.cos(-d) - posHeight*Math.sin(-d);
+				posHeight = tmp*Math.sin(-d) + posHeight*Math.cos(-d);
+				
+>>>>>>> 51d026170c931379e351981ce96086f4fbaeafb0:avatar3.3.1/components/yq-avatar/yq-avatar.vue
 				// #ifdef MP-ALIPAY	
 				ctxCanvas.save();
 				// #endif
@@ -734,6 +762,7 @@
 				} else {
 					ctxCanvas.fillRect(0, 0, this.windowWidth, this.windowHeight - tabHeight);
 				}
+<<<<<<< HEAD:avatar3.3.2/components/yq-avatar/yq-avatar.vue
 
 				if (this.isin) {
 					let cx = this.focusX * (this.scaleSize - 1),
@@ -748,6 +777,19 @@
 					ctxCanvas.translate(this.centerX, this.centerY);
 					ctxCanvas.rotate(d);
 					ctxCanvas.drawImage(this.imgPath, posWidth, posHeight, imgWidth, imgHeight);
+=======
+				
+				ctxCanvas.translate(this.centerX, this.centerY);
+				ctxCanvas.rotate(d);
+				ctxCanvas.drawImage(this.imgPath, posWidth, posHeight, imgWidth, imgHeight);
+				
+				if(ini){
+					setTimeout(()=>{
+						ctxCanvas.draw(true,()=>{
+							this.fDrawImage();
+						});
+					}, 30);
+>>>>>>> 51d026170c931379e351981ce96086f4fbaeafb0:avatar3.3.1/components/yq-avatar/yq-avatar.vue
 				} else {
 					ctxCanvas.translate(this.posWidth + imgWidth / 2, this.posHeight + imgHeight / 2);
 					ctxCanvas.rotate(d);
@@ -992,6 +1034,7 @@
 			},
 			fRotate() {
 				// if(this.letRotate) {
+<<<<<<< HEAD:avatar3.3.2/components/yq-avatar/yq-avatar.vue
 				this.rotateDeg += 90 - this.rotateDeg % 90;
 				if (this.isin) {
 					let cx = this.focusX * (this.scaleSize - 1),
@@ -1001,6 +1044,15 @@
 					this.posHeight = this.centerY + cy + tmp - this.centerX - cx;
 				}
 				this.fDrawImage();
+=======
+					this.rotateDeg += 90 - this.rotateDeg%90;
+					let cx = this.focusX*(this.scaleSize - 1),
+						cy = this.focusY*(this.scaleSize - 1),
+						tmp = this.posWidth;
+					this.posWidth = this.centerX + cx - this.posHeight + this.centerY + cy;
+					this.posHeight = this.centerY + cy + tmp - this.centerX - cx;
+					this.fDrawImage();
+>>>>>>> 51d026170c931379e351981ce96086f4fbaeafb0:avatar3.3.1/components/yq-avatar/yq-avatar.vue
 				// }
 			},
 			fStart(e) {
