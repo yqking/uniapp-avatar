@@ -10,7 +10,7 @@
 
 H5测试地址
 
-![image](http://www.snyvic.eu/public/static/m.png)
+![image](https://github.com/yqking/uniapp-avatar/blob/master/qr.png)
 
 <br/><br/>
 
