@@ -4,11 +4,9 @@
 
 1)  android4.4之前的版本，uniapp部分函数有bug，请使用高版本进行测试
 
-2)  H5平台需要根据文件类型添加后缀
+2)  H5平台，后台收到文件后，需要根据文件类型添加后缀，无法直接使用文件后缀
 
 3)  百度小程序使用头像的页面，需要在页面style里配置 "disableScroll": true
-
-4)  使用头像页面需要禁用最新的v3编译模式
 
 H5测试地址
 
@@ -100,6 +98,7 @@ H5测试地址
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
 | quality     | 否   | 生成图片质量，取值范围0~1，默认1                             |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
+| fileType    | 否   | 报错图片格式，jpg或png，默认png。H5平台当前只支持png格式     |
 | noTab       | 否   | 是否存在tabBar，默认false，主要为了去除报错存信息，不设置也不影响使用 |
 | minScale    | 否   | 缩放允许的最小比例，默认0.3                                  |
 | maxScale    | 否   | 缩放允许的最大比例，默认4                                    |
@@ -112,7 +111,7 @@ H5测试地址
 
 | 事件    | 必须 | 说明                                                         |
 | ------- | ---- | :----------------------------------------------------------- |
-| upload  | 是   | <p align="left">在点击上传后调用<br/>返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined </p>|
+| upload  | 是   | <p align="left">在点击上传后调用<br/>返回格式 {avatar: xx, path: xx, index: xx, data: xx}<br/>avatar: 对象类型，可以通过更新imgSrc值，更新头像<br/>path: 临时头像地址<br/>index: 索引<br/>data: 通过fChooseImg函数设置的额外数据，默认undefined<br/>base64: 当前只有H5平台有base64格式图片</p> |
 | avtinit | 否   | 在图片选择后调用，可用于自定义操作，例如禁用下拉刷新，点击上传后再启用 |
 <br/>
 
