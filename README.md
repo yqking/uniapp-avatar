@@ -55,7 +55,7 @@ H5测试地址
 //template部分
     <image :src="urls[0]" @click="clk(0)"></image>
     <image :src="urls[1]" @click="clk(1)"></image>
-    <button @click="clk(0)">按钮触发<button>
+    <button @click="clk(0)">按钮触发</button>
     <avatar @upload="myUpload" ref="avatar"></avatar>
 
 //script部分
