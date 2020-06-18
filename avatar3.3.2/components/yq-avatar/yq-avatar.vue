@@ -214,8 +214,8 @@
 												this.selHeight);
 										style.width = selWidth + 'px';
 										style.height = selHeight + 'px';
-										style.top = (this.windowHeight - selHeight - tabHeight) / 2 + 'px';
-										style.left = (this.windowWidth - selWidth) / 2 + 'px';
+										style.top = ((this.windowHeight - selHeight - tabHeight)|0) / 2 + 'px';
+										style.left = ((this.windowWidth - selWidth)|0) / 2 + 'px';
 									} else {
 										uni.showModal({
 											title: '裁剪框的宽或高没有设置',
