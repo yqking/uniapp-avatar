@@ -666,7 +666,7 @@
 					ctxCanvas = this.ctxCanvas,
 					ctxCanvasOper = this.ctxCanvasOper;
 
-				ctxCanvasOper.setLineWidth(2);
+				ctxCanvasOper.setLineWidth(3);
 				ctxCanvasOper.setGlobalAlpha(1);
 				ctxCanvasOper.setStrokeStyle('white');
 				ctxCanvasOper.strokeRect(left, top, width, height);
@@ -678,21 +678,20 @@
 				ctxCanvasOper.fillRect(0, top + height, this.windowWidth, this.windowHeight - height - top - tabHeight);
 				ctxCanvasOper.fillRect(left + width, top, this.windowWidth - width - left, height);
 				
-				ctxCanvasOper.setLineWidth(3);
 				ctxCanvasOper.setGlobalAlpha(1);
 				ctxCanvasOper.setStrokeStyle('red');
-				ctxCanvasOper.moveTo(left+15, top-2);
-				ctxCanvasOper.lineTo(left-2, top-2);
-				ctxCanvasOper.lineTo(left-2, top+15);
-				ctxCanvasOper.moveTo(left+width-15, top-2);
-				ctxCanvasOper.lineTo(left+width+2, top-2);
-				ctxCanvasOper.lineTo(left+width+2, top+15);
-				ctxCanvasOper.moveTo(left+15, top+height+2);
-				ctxCanvasOper.lineTo(left-2, top+height+2);
-				ctxCanvasOper.lineTo(left-2, top+height-15);
-				ctxCanvasOper.moveTo(left+width-15, top+height+2);
-				ctxCanvasOper.lineTo(left+width+2, top+height+2);
-				ctxCanvasOper.lineTo(left+width+2, top+height-15);
+				ctxCanvasOper.moveTo(left+15, top);
+				ctxCanvasOper.lineTo(left, top);
+				ctxCanvasOper.lineTo(left, top+15);
+				ctxCanvasOper.moveTo(left+width-15, top);
+				ctxCanvasOper.lineTo(left+width, top);
+				ctxCanvasOper.lineTo(left+width, top+15);
+				ctxCanvasOper.moveTo(left+15, top+height);
+				ctxCanvasOper.lineTo(left, top+height);
+				ctxCanvasOper.lineTo(left, top+height-15);
+				ctxCanvasOper.moveTo(left+width-15, top+height);
+				ctxCanvasOper.lineTo(left+width, top+height);
+				ctxCanvasOper.lineTo(left+width, top+height-15);
 				ctxCanvasOper.stroke();
 
 				ctxCanvasOper.draw(false, () => {
@@ -718,7 +717,6 @@
 				let ctxCanvas = this.ctxCanvas,
 					imgWidth = this.useWidth * this.scaleSize,
 					imgHeight = this.useHeight * this.scaleSize;
-					// d = this.rotateDeg * Math.PI / 180;
 
 				// #ifdef MP-ALIPAY	
 				ctxCanvas.save();
@@ -738,12 +736,6 @@
 				if (this.isin) {
 					let cx = this.focusX * (this.scaleSize - 1),
 						cy = this.focusY * (this.scaleSize - 1);
-					// 	posWidth = this.posWidth - this.centerX - cx,
-					// 	posHeight = this.posHeight - this.centerY - cy,
-					// 	tmp = posWidth;
-
-					// posWidth = posWidth * Math.cos(-d) - posHeight * Math.sin(-d);
-					// posHeight = tmp * Math.sin(-d) + posHeight * Math.cos(-d);
 
 					ctxCanvas.translate(this.centerX, this.centerY);
 					ctxCanvas.rotate(this.rotateDeg * Math.PI / 180);
@@ -755,15 +747,7 @@
 					ctxCanvas.drawImage(this.imgPath, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
 				}
 
-				// if(ini){
-				// 	setTimeout(()=>{
-				// 		ctxCanvas.draw(true,()=>{
-				// 			this.fDrawImage();
-				// 		});
-				// 	}, 30);
-				// } else {
 				ctxCanvas.draw(false);
-				// }
 
 				// #ifdef MP-ALIPAY
 				ctxCanvas.restore();
@@ -982,8 +966,8 @@
 						selHeight = selHeight.indexOf('upx') >= 0 ? parseInt(selHeight) * this.pxRatio : parseInt(selHeight);
 						this.selStyle.width = selWidth + 'px';
 						this.selStyle.height = selHeight + 'px';
-						this.selStyle.top = (this.windowHeight - selHeight - tabHeight) / 2 + 'px';
-						this.selStyle.left = (this.windowWidth - selWidth) / 2 + 'px';
+						this.selStyle.top = ((this.windowHeight - selHeight - tabHeight)|0) / 2 + 'px';
+						this.selStyle.left = ((this.windowWidth - selWidth)|0) / 2 + 'px';
 						this.hasSel = true;
 					}
 				}
@@ -992,17 +976,8 @@
 				this.fSelect();
 			},
 			fRotate() {
-				// if(this.letRotate) {
 				this.rotateDeg += 90 - this.rotateDeg % 90;
-				// if (this.isin) {
-				// 	let cx = this.focusX * (this.scaleSize - 1),
-				// 		cy = this.focusY * (this.scaleSize - 1),
-				// 		tmp = this.posWidth;
-				// 	this.posWidth = this.centerX + cx - this.posHeight + this.centerY + cy;
-				// 	this.posHeight = this.centerY + cy + tmp - this.centerX - cx;
-				// }
 				this.fDrawImage();
-				// }
 			},
 			fStart(e) {
 				let touches = e.touches,
@@ -1109,10 +1084,8 @@
 
 						if (!this.lckWidth && Math.abs(x) < 100) {
 							if (left < l - cx) {
-								// this.focusX -= (left+cx-this.posWidth);
 								this.posWidth = left + cx;
 							} else if (right > r - cx) {
-								// this.focusX -= (right+cx-(this.posWidth+imgWidth));
 								this.posWidth = right - imgWidth + cx;
 							} else {
 								this.posWidth = beX;
