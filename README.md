@@ -97,7 +97,7 @@ H5测试地址
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
 | quality     | 否   | 生成图片质量，取值范围0~1，默认1                             |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
-| fileType    | 否   | 报错图片格式，jpg或png，默认png。H5平台当前只支持png格式     |
+| fileType    | 否   | 报错图片格式，jpg或png，默认png。     |
 | noTab       | 否   | 是否存在tabBar，默认false，主要为了去除报错存信息，不设置也不影响使用 |
 | minScale    | 否   | 缩放允许的最小比例，默认0.3                                  |
 | maxScale    | 否   | 缩放允许的最大比例，默认4                                    |
