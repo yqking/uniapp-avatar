@@ -1,5 +1,5 @@
 <template name="yq-avatar">
-	<view>
+	<view @tap.stop>
 		<image :src="imgSrc.imgSrc" @click="fSelect" :style="[ imgStyle ]" class="my-avatar"></image>
 		<canvas canvas-id="avatar-canvas" id="avatar-canvas" class="my-canvas" :style="{top: styleTop, height: cvsStyleHeight}"
 		 disable-scroll="false"></canvas>
@@ -78,10 +78,10 @@
 			this.ctxCanvas = uni.createCanvasContext('avatar-canvas', this);
 			this.ctxCanvasOper = uni.createCanvasContext('oper-canvas', this);
 			this.ctxCanvasPrv = uni.createCanvasContext('prv-canvas', this);
-			this.qlty = parseInt(this.quality) || 0.9;
+			this.qlty = parseInt(this.quality) || 1;
 			this.imgSrc.imgSrc = this.avatarSrc;
-			this.letRotate = (this.canRotate === 'false' || this.inner === true || this.inner === 'true') ? 0 : 1;
-			this.letScale = this.canScale === 'false' ? 0 : 1;
+			this.letRotate = (this.canRotate === false || this.inner === true || this.inner === 'true' || this.canRotate === 'false') ? 0 : 1;
+			this.letScale = (this.canScale === false || this.canScale === 'false') ? 0 : 1;
 			this.isin = (this.inner === true || this.inner === 'true') ? 1 : 0;
 			this.indx = this.index || undefined;
 			this.mnScale = this.minScale || 0.3;
@@ -90,7 +90,7 @@
 			this.stc = this.stretch;
 			this.lck = this.lock;
 			this.fType = this.fileType === 'jpg' ? 'jpg' : 'png';
-			if (this.isin) {
+			if (this.isin||!this.letRotate) {
 				this.btnWidth = '24%';
 				this.btnDsp = 'none';
 			} else {
@@ -944,16 +944,16 @@
 						expWidth));
 					expHeight && (this.exportHeight = expHeight.indexOf('upx') >= 0 ? parseInt(expHeight) * this.pxRatio : parseInt(
 						expHeight));
-					this.letRotate = (canRotate === 'false' || inner === 'true' || inner === true) ? 0 : 1;
-					this.letScale = canScale === 'false' ? 0 : 1;
-					this.qlty = parseInt(quality) || 0.9;
+					this.letRotate = (canRotate === false || inner === true || inner === 'true' || canRotate === 'false') ? 0 : 1;
+					this.letScale = (canScale === false || canScale === 'false') ? 0 : 1;
+					this.qlty = parseInt(quality) || 1;
 					this.mnScale = minScale || 0.3;
 					this.mxScale = maxScale || 4;
 					this.stc = stretch;
 					this.isin = (inner === true || inner === 'true') ? 1 : 0;
 					this.fType = fileType === 'jpg' ? 'jpg' : 'png';
 					this.lck = lock;
-					if (this.isin) {
+					if (this.isin||!this.letRotate) {
 						this.btnWidth = '24%';
 						this.btnDsp = 'none';
 					} else {
