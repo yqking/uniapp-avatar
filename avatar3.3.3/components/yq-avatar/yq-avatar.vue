@@ -1,5 +1,5 @@
 <template name="yq-avatar">
-	<view @tap.stop>
+	<view>
 		<image :src="imgSrc.imgSrc" @click="fSelect" :style="[ imgStyle ]" class="my-avatar"></image>
 		<canvas canvas-id="avatar-canvas" id="avatar-canvas" class="my-canvas" :style="{top: styleTop, height: cvsStyleHeight}"
 		 disable-scroll="false"></canvas>
@@ -261,8 +261,8 @@
 					y = parseInt(style.top),
 					width = parseInt(style.width),
 					height = parseInt(style.height),
-					expWidth = (this.exportWidth || width) * this.pixelRatio,
-					expHeight = (this.exportHeight || height) * this.pixelRatio;
+					expWidth = this.exportWidth || (width* this.pixelRatio),
+					expHeight = this.exportHeight || (height* this.pixelRatio);
 
 				// #ifdef MP-ALIPAY
 				uni.showLoading();
@@ -325,52 +325,14 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r) => {
-							if (this.exportWidth && this.exportHeight) {
-								let ctxCanvas = this.ctxCanvas,
-									expWidth = this.exportWidth;
-								expHeight = this.exportHeight;
-
-								ctxCanvas.drawImage(r, 0, 0, expWidth, expHeight);
-								ctxCanvas.draw(false, () => {
-									uni.canvasToTempFilePath({
-										x: 0,
-										y: 0,
-										width: expWidth,
-										height: expHeight,
-										destWidth: expWidth * this.pixelRatio,
-										destHeight: expHeight * this.pixelRatio,
-										canvasId: 'avatar-canvas',
-										fileType: this.fType,
-										quality: this.qlty,
-										success: (r) => {
-											r = r.tempFilePath;
-											this.btop(r).then((r) => {
-												this.$emit("upload", {
-													avatar: this.imgSrc,
-													path: r,
-													index: this.indx,
-													data: this.rtn,
-													base64: this.base64 || null
-												});
-											});
-										},
-										fail: () => {
-											uni.showToast({
-												title: "error0",
-												duration: 2000,
-											})
-										}
-									});
-								});
-							} else {
-								this.$emit("upload", {
-									avatar: this.imgSrc,
-									path: r,
-									index: this.indx,
-									data: this.rtn,
-									base64: this.base64 || null
-								});
-							}
+							this.$emit("upload", {
+								avatar: this.imgSrc,
+								path: r,
+								index: this.indx,
+								data: this.rtn,
+								base64: this.base64 || null
+							});
+							return;
 						})
 						// #endif
 						// #ifndef H5
@@ -410,8 +372,8 @@
 					prvY = this.prvY,
 					prvWidth = this.prvWidth,
 					prvHeight = this.prvHeight,
-					expWidth = (this.exportWidth || prvWidth) * this.pixelRatio,
-					expHeight = (this.exportHeight || prvHeight) * this.pixelRatio;
+					expWidth = this.exportWidth || (parseInt(style.width) * this.pixelRatio),
+					expHeight = this.exportHeight || (parseInt(style.height) * this.pixelRatio);
 
 				// #ifdef MP-ALIPAY
 				uni.showLoading();
@@ -474,52 +436,13 @@
 						r = r.tempFilePath;
 						// #ifdef H5
 						this.btop(r).then((r) => {
-							if (this.exportWidth && this.exportHeight) {
-								let ctxCanvas = this.ctxCanvas;
-								expWidth = this.exportWidth,
-									expHeight = this.exportHeight;
-
-								ctxCanvas.drawImage(r, 0, 0, expWidth, expHeight);
-								ctxCanvas.draw(false, () => {
-									uni.canvasToTempFilePath({
-										x: 0,
-										y: 0,
-										width: expWidth,
-										height: expHeight,
-										destWidth: expWidth * this.pixelRatio,
-										destHeight: expHeight * this.pixelRatio,
-										canvasId: 'avatar-canvas',
-										fileType: this.fType,
-										quality: this.qlty,
-										success: (r) => {
-											r = r.tempFilePath;
-											this.btop(r).then((r) => {
-												this.$emit("upload", {
-													avatar: this.imgSrc,
-													path: r,
-													index: this.indx,
-													data: this.rtn,
-													base64: this.base64 || null
-												});
-											});
-										},
-										fail: () => {
-											uni.showToast({
-												title: "error0",
-												duration: 2000,
-											})
-										}
-									});
-								});
-							} else {
-								this.$emit("upload", {
-									avatar: this.imgSrc,
-									path: r,
-									index: this.indx,
-									data: this.rtn,
-									base64: this.base64 || null
-								});
-							}
+							this.$emit("upload", {
+								avatar: this.imgSrc,
+								path: r,
+								index: this.indx,
+								data: this.rtn,
+								base64: this.base64 || null
+							});
 						})
 						// #endif
 						// #ifndef H5
@@ -620,7 +543,6 @@
 						useWidth = imgWidth;
 						useHeight = imgHeight;
 					} else {
-						// useHeight = useHeight;
 						useWidth = useHeight * imgRadio;
 					}
 				} else {
@@ -628,7 +550,6 @@
 						useWidth = imgWidth;
 						useHeight = imgHeight;
 					} else {
-						// useWidth = useWidth;
 						useHeight = useWidth / imgRadio;
 					}
 				}
@@ -665,7 +586,8 @@
 					canvasOper = this.canvasOper,
 					ctxCanvas = this.ctxCanvas,
 					ctxCanvasOper = this.ctxCanvasOper;
-
+					
+				ctxCanvasOper.beginPath();
 				ctxCanvasOper.setLineWidth(3);
 				ctxCanvasOper.setGlobalAlpha(1);
 				ctxCanvasOper.setStrokeStyle('white');
@@ -693,7 +615,7 @@
 				ctxCanvasOper.lineTo(left+width, top+height);
 				ctxCanvasOper.lineTo(left+width, top+height-15);
 				ctxCanvasOper.stroke();
-
+				
 				ctxCanvasOper.draw(false, () => {
 					if (ini) {
 						this.styleDisplay = 'flex';
@@ -706,7 +628,7 @@
 						this.fDrawImage(true);
 					}
 				});
-
+				
 				this.$emit("avtinit");
 			},
 			fDrawImage(ini = false) {
@@ -721,10 +643,10 @@
 				// #ifdef MP-ALIPAY	
 				ctxCanvas.save();
 				// #endif
-
+				
 				if (this.bgImage) {
 					// #ifdef MP-ALIPAY
-					ctxCanvas.fillRect(0, 0, this.windowWidth, this.windowHeight - tabHeight);
+					ctxCanvas.clearRect(0, 0, this.windowWidth, this.windowHeight - tabHeight);
 					// #endif
 					// #ifndef MP-ALIPAY
 					ctxCanvas.drawImage(this.bgImage, 0, 0, this.windowWidth, this.windowHeight - tabHeight);
@@ -805,9 +727,7 @@
 							prvWidth *= radio;
 							prvHeight = useHeight;
 						}
-						// ctxCanvasPrv.setFillStyle('black');
 						ctxCanvasPrv.fillRect(0, 0, prvX, prvY);
-						// ctxCanvasPrv.drawImage(this.bgImage, 0, 0, prvX, prvY); 预览显示背景图
 						this.prvX = prvX = ((prvX - prvWidth) / 2) | 0;
 						this.prvY = prvY = ((prvY - prvHeight) / 2) | 0;
 						this.prvWidth = prvWidth = prvWidth | 0;
@@ -872,9 +792,7 @@
 							prvHeight = useHeight;
 						}
 
-						// ctxCanvasPrv.setFillStyle('black');
 						ctxCanvasPrv.fillRect(0, 0, prvX, prvY);
-						// ctxCanvasPrv.drawImage(this.bgImage, 0, 0, prvX, prvY); 预览显示背景图
 						this.prvX = prvX = ((prvX - prvWidth) / 2) | 0;
 						this.prvY = prvY = ((prvY - prvHeight) / 2) | 0;
 						this.prvWidth = prvWidth = prvWidth | 0;
@@ -895,13 +813,12 @@
 						// #endif
 
 						// #ifdef APP-PLUS
+						this.prvTop = '0';
 						if (this.platform === 'android') {
 							// this.prvTop = tabHeight + 'px';
 							// this.showOper = false;
-							this.prvTop = '0';
 						} else {
 							this.showOper = false;
-							this.prvTop = '0';
 						}
 						// #endif
 

@@ -16,7 +16,7 @@ H5测试地址
 
 感谢如下用户信息反馈，为组件优化提供宝贵意见和建议
 
- 393747897@qq.com、caomeiyouren@qq.com、enson、lionxiong
+ 393747897@qq.com、caomeiyouren@qq.com、enson、lionxiong、dcloud@zdxai.com
 
 <br/><br/>
 
@@ -92,12 +92,12 @@ H5测试地址
 | avatarSrc   | 否   | 头像地址                                                     |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
 | bgImg       | 否   | 剪切背景图片，默认黑色背景                                   |
-| expWidth    | 否   | 设置导出图片宽度，实际宽度=该值*像素密度。默认值selWidth     |
-| expHeight   | 否   | 设置导出图片高度，实际高度=该值*像素密度。默认值selHeight    |
+| expWidth    | 否   | 设置导出图片宽度。默认值selWidth*屏幕像素密度                |
+| expHeight   | 否   | 设置导出图片高度。默认值selHeight*屏幕像素密度               |
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
 | quality     | 否   | 生成图片质量，取值范围0~1，默认1                             |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
-| fileType    | 否   | 报错图片格式，jpg或png，默认png。     |
+| fileType    | 否   | 报错图片格式，jpg或png，默认png。                            |
 | noTab       | 否   | 是否存在tabBar，默认false，主要为了去除报错存信息，不设置也不影响使用 |
 | minScale    | 否   | 缩放允许的最小比例，默认0.3                                  |
 | maxScale    | 否   | 缩放允许的最大比例，默认4                                    |
@@ -112,7 +112,6 @@ H5测试地址
 | -------- | ---- | :----------------------------------------------------------- |
 | upload   | 是   | <p align="left">点击上传后回调<br/>{<br/>avatar：对象类型，可以通过更新imgSrc值，更新头像<br/>path：临时头像地址<br/>index：图片索引<br/>data：通过fChooseImg函数设置的额外数据，默认undefined<br/>base64：当前只有H5平台有base64格式图片<br/>}</p> |
 | avtinit  | 否   | 在图片选择后调用，可用于自定义操作，例如禁用下拉刷新，点击上传后再启用 |
-
 <br/>
 
 | ref可调用方法                   | 参数说明                                                     |
@@ -127,6 +126,7 @@ H5测试地址
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+|       | 修复导出大尺寸错误bug，修改expWidth、expHeight默认计算规则，性能优化 |
 | 3.3.2 | 恢复遮罩、增加到处文件类型fileType参数、修复旋转后移动方向异常、修复裁剪框某些比例出现bug异常、增加loading提示文字、修复重选图片时图片重叠bug、百度小程序支持渲染、H5平台可以返回base64格式图片 |
 | 3.3.1 | 优化缩放、移动操作，修复expWidth、expHeight错误设置导致图片不清晰bug |
 | 3.3.0 | 增加对支付宝小程序支持                                       |
