@@ -16,7 +16,7 @@ H5测试地址
 
 感谢如下用户信息反馈，为组件优化提供宝贵意见和建议
 
- 393747897@qq.com、caomeiyouren@qq.com、enson、lionxiong、dcloud@zdxai.com
+ **393747897@qq.com、caomeiyouren@qq.com、enson、lionxiong、dcloud@zdxai.com、帅少**
 
 <br/><br/>
 
@@ -89,6 +89,7 @@ H5测试地址
 | ----------- | ---- | ------------------------------------------------------------ |
 | selWidth    | 是   | 裁剪区域的宽                                                 |
 | selHeight   | 是   | 裁剪区域的高                                                 |
+| noTab       | 否   | 是否存在tabBar，默认false，即有tabBar。**支付宝小程序必须填写，不然无法运行** |
 | avatarSrc   | 否   | 头像地址                                                     |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
 | bgImg       | 否   | 剪切背景图片，默认黑色背景                                   |
@@ -98,7 +99,6 @@ H5测试地址
 | quality     | 否   | 生成图片质量，取值范围0~1，默认1                             |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
 | fileType    | 否   | 报错图片格式，jpg或png，默认png。                            |
-| noTab       | 否   | 是否存在tabBar，默认false，主要为了去除报错存信息，不设置也不影响使用 |
 | minScale    | 否   | 缩放允许的最小比例，默认0.3                                  |
 | maxScale    | 否   | 缩放允许的最大比例，默认4                                    |
 | canRotate   | 否   | 是否允许旋转，默认true                                       |
@@ -126,6 +126,7 @@ H5测试地址
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.3.4 | 支付宝平台必须填写noTab参数                                  |
 | 3.3.3 | 修复导出大尺寸错误bug，修改expWidth、expHeight默认计算规则，性能优化 |
 | 3.3.2 | 恢复遮罩、增加到处文件类型fileType参数、修复旋转后移动方向异常、修复裁剪框某些比例出现bug异常、增加loading提示文字、修复重选图片时图片重叠bug、百度小程序支持渲染、H5平台可以返回base64格式图片 |
 | 3.3.1 | 优化缩放、移动操作，修复expWidth、expHeight错误设置导致图片不清晰bug |

@@ -1,0 +1,68 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				},
+				"disableScroll": true
+			}
+		},
+        {
+            "path" : "pages/moreTab/moreTab",
+            "style" : {
+				"app-plus": {
+					"titleNView": { 
+						"buttons": [ //原生标题栏按钮配置,
+                            {
+                                "text": "分享" //原生标题栏增加分享按钮，点击事件可通过页面的 onNavigationBarButtonTap 函数进行监听
+                            }
+                        ],
+                        "backButton": { //自定义 backButton
+                            "background": "#00FF00"
+                        }
+					}
+				},
+				"disableScroll": true
+			}
+        },
+		{
+            "path" : "pages/none/none",
+            "style" : {}
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"navigationStyle": "custom"
+	},
+	"tabBar": {
+		"list": [
+			{
+				"pagePath":"pages/index/index",
+				"text":"头像"
+			},
+			{
+				"pagePath":"pages/none/none",
+				"text":"空页"
+			},
+			{
+				"pagePath":"pages/moreTab/moreTab",
+				"text":"更多"
+			}
+		]
+	},
+	"condition" : { //模式配置，仅开发期间生效
+		"current": 0, //当前激活的模式(list 的索引项)
+		"list": [
+			{
+				"name": "", //模式名称
+				"path": "", //启动页面，必选
+				"query": "" //启动参数，在页面的onLoad函数里面得到
+			}
+		]
+	}
+}
