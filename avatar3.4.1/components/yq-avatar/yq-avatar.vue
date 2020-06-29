@@ -1,25 +1,25 @@
 <template name="yq-avatar">
 	<view>
-		<image :src="imgSrc.imgSrc" @click="fSelect" :style="[ imgStyle ]" class="my-avatar"></image>
-		<canvas canvas-id="avatar-canvas" id="avatar-canvas" class="my-canvas" :style="{top: styleTop, height: cvsStyleHeight}"
+		<image :src="imgSrc.imgSrc" @click="fSelect" :style="[ iS ]" class="my-avatar"></image>
+		<canvas canvas-id="avatar-canvas" id="avatar-canvas" class="my-canvas" :style="{top: sT, height: csH}"
 		 disable-scroll="false"></canvas>
-		<canvas canvas-id="oper-canvas" id="oper-canvas" class="oper-canvas" :style="{top: styleTop, height: cvsStyleHeight}"
+		<canvas canvas-id="oper-canvas" id="oper-canvas" class="oper-canvas" :style="{top: sT, height: csH}"
 		 disable-scroll="false" @touchstart="fStart" @touchmove="fMove" @touchend="fEnd"></canvas>
-		<canvas canvas-id="prv-canvas" id="prv-canvas" class="prv-canvas" disable-scroll="false" @touchstart="fHideImg"
-		 :style="{ height: cvsStyleHeight, top: prvTop }"></canvas>
-		<view class="oper-wrapper" :style="{display: styleDisplay}">
+		<canvas canvas-id="prv-canvas" id="prv-canvas" class="prv-canvas" disable-scroll="false" 
+		@touchstart="fHideImg" :style="{ height: csH, top: pT }"></canvas>
+		<view class="oper-wrapper" :style="{display: sD, bottom:btm}">
 			<view class="oper">
-				<view class="btn-wrapper" v-if="showOper">
-					<view @click="fSelect" hover-class="hover" :style="{width: btnWidth}"><text>重选</text></view>
-					<view @click="fClose" hover-class="hover" :style="{width: btnWidth}"><text>关闭</text></view>
-					<view @click="fRotate" hover-class="hover" :style="{width: btnWidth, display: btnDsp}"><text>旋转</text></view>
-					<view @click="fPreview" hover-class="hover" :style="{width: btnWidth}"><text>预览</text></view>
-					<view @click="fUpload" hover-class="hover" :style="{width: btnWidth}"><text>上传</text></view>
+				<view class="btn-wrapper" v-if="sO">
+					<view @click="fSelect" hover-class="hover" :style="{width: bW}"><text>重选</text></view>
+					<view @click="fClose" hover-class="hover" :style="{width: bW}"><text>关闭</text></view>
+					<view @click="fRotate" hover-class="hover" :style="{width: bW, display: bD}"><text>旋转</text></view>
+					<view @click="fPreview" hover-class="hover" :style="{width: bW}"><text>预览</text></view>
+					<view @click="fUpload" hover-class="hover" :style="{width: bW}"><text>上传</text></view>
 				</view>
 				<view class="clr-wrapper" v-else>
 					<slider class="my-slider" @change="fColorChange" block-size="25" value="0" min="-100" max="100" activeColor="red"
 					 backgroundColor="green" block-color="grey" show-value></slider>
-					<view @click="fPrvUpload" hover-class="hover" :style="{width: btnWidth}"><text>上传</text></view>
+					<view @click="fPrvUpload" hover-class="hover" :style="{width: bW}"><text>上传</text></view>
 				</view>
 			</view>
 		</view>
@@ -28,23 +28,24 @@
 
 <script>
 	"use strict";
-	const tabHeight = 50;
+	const tH = 50;
 	export default {
 		name: "yq-avatar",
 		data() {
 			return {
-				cvsStyleHeight: '0px',
-				styleDisplay: 'none',
-				styleTop: '-10000px',
-				prvTop: '-10000px',
-				imgStyle: {},
-				selStyle: {},
-				showOper: true,
+				csH: '0px',
+				sD: 'none',
+				sT: '-10000px',
+				pT: '-10000px',
+				iS: {},
+				sS: {},
+				sO: true,
+				bW: '19%',
+				bD: 'flex',
+				btm: 0,
 				imgSrc: {
 					imgSrc: ''
-				},
-				btnWidth: '19%',
-				btnDsp: 'flex',
+				}
 			};
 		},
 		watch: {
@@ -75,9 +76,9 @@
 			bgImage: '',
 		},
 		created() {
-			this.ctxCanvas = uni.createCanvasContext('avatar-canvas', this);
-			this.ctxCanvasOper = uni.createCanvasContext('oper-canvas', this);
-			this.ctxCanvasPrv = uni.createCanvasContext('prv-canvas', this);
+			this.cc = uni.createCanvasContext('avatar-canvas', this);
+			this.cco = uni.createCanvasContext('oper-canvas', this);
+			this.ccp = uni.createCanvasContext('prv-canvas', this);
 			this.qlty = parseInt(this.quality) || 1;
 			this.imgSrc.imgSrc = this.avatarSrc;
 			this.letRotate = (this.canRotate === false || this.inner === true || this.inner === 'true' || this.canRotate === 'false') ? 0 : 1;
@@ -91,11 +92,11 @@
 			this.lck = this.lock;
 			this.fType = this.fileType === 'jpg' ? 'jpg' : 'png';
 			if (this.isin||!this.letRotate) {
-				this.btnWidth = '24%';
-				this.btnDsp = 'none';
+				this.bW = '24%';
+				this.bD = 'none';
 			} else {
-				this.btnWidth = '19%';
-				this.btnDsp = 'flex';
+				this.bW = '19%';
+				this.bD = 'flex';
 			}
 			
 			if (this.noBar) {
@@ -118,27 +119,30 @@
 			fWindowResize() {
 				let sysInfo = uni.getSystemInfoSync();
 				this.platform = sysInfo.platform;
-				this.pixelRatio = sysInfo.pixelRatio;
-				this.windowWidth = sysInfo.windowWidth;
+				this.wW = sysInfo.windowWidth;
 
 				this.drawTop = 0;
 				// #ifdef MP-ALIPAY
-				this.windowHeight = sysInfo.screenHeight - sysInfo.statusBarHeight - sysInfo.titleBarHeight;
-				this.cvsStyleHeight = this.windowHeight - tabHeight  + 'px';
+				this.wH = sysInfo.screenHeight - sysInfo.statusBarHeight - sysInfo.titleBarHeight;
+				this.csH = this.wH - tH  + 'px';
 				// #endif
 				
 				// #ifndef MP-ALIPAY
 				if(sysInfo.screenHeight === sysInfo.windowHeight) {
-					this.windowHeight = sysInfo.screenHeight;
-					this.cvsStyleHeight = this.windowHeight - tabHeight  + 'px';
+					this.wH = sysInfo.screenHeight;
+					this.csH = this.wH - tH  + 'px';
 				} else {
-					this.windowHeight = sysInfo.windowHeight;
-					if(!this.noBar) this.windowHeight += tabHeight;
-					this.cvsStyleHeight = this.windowHeight - tabHeight  + 'px';
+					this.wH = sysInfo.windowHeight;
+					if(!this.noBar) this.wH += tH;
+					this.csH = this.wH - tH  + 'px';
 				}
+				// #ifdef MP
+				this.btm = sysInfo.screenHeight - this.wH + 'px';
 				// #endif
+				// #endif
+				
 
-				this.pxRatio = this.windowWidth / 750;
+				this.pxRatio = this.wW / 750;
 
 				let style = this.avatarStyle;
 				if (style && style !== true && (style = style.trim())) {
@@ -147,11 +151,11 @@
 					for (let v of style) {
 						if (!v) continue;
 						v = v.trim().split(':');
-						if (v[1].indexOf('upx') >= 0) {
+						if (v[1].toString().indexOf('upx') >= 0) {
 							let arr = v[1].trim().split(' ');
 							for (let k in arr) {
 								if (!arr[k]) continue;
-								if (arr[k].indexOf('upx') >= 0) {
+								if (arr[k].toString().indexOf('upx') >= 0) {
 									arr[k] = parseFloat(arr[k]) * this.pxRatio + 'px';
 								}
 							}
@@ -159,15 +163,15 @@
 						}
 						obj[v[0].trim()] = v[1].trim();
 					}
-					this.imgStyle = obj;
+					this.iS = obj;
 				}
 
-				this.expWidth && (this.exportWidth = this.expWidth.indexOf('upx') >= 0 ? parseInt(this.expWidth) * this.pxRatio :
+				this.expWidth && (this.eW = this.expWidth.toString().indexOf('upx') >= 0 ? parseInt(this.expWidth) * this.pxRatio :
 					parseInt(this.expWidth));
-				this.expHeight && (this.exportHeight = this.expHeight.indexOf('upx') >= 0 ? parseInt(this.expHeight) * this.pxRatio :
+				this.expHeight && (this.eH = this.expHeight.toString().indexOf('upx') >= 0 ? parseInt(this.expHeight) * this.pxRatio :
 					parseInt(this.expHeight));
-
-				if (this.styleDisplay === 'flex') {
+				
+				if (this.sD === 'flex') {
 					this.fDrawInit(true);
 				}
 				this.fHideImg();
@@ -202,16 +206,16 @@
 								this.imgHeight = r.height;
 								this.path = path;
 								if (!this.hasSel) {
-									let style = this.selStyle || {};
+									let style = this.sS || {};
 									if (this.selWidth && this.selHeight) {
-										let selWidth = this.selWidth.indexOf('upx') >= 0 ? parseInt(this.selWidth) * this.pxRatio : parseInt(
+										let sW = this.selWidth.toString().indexOf('upx') >= 0 ? parseInt(this.selWidth) * this.pxRatio : parseInt(
 												this.selWidth),
-											selHeight = this.selHeight.indexOf('upx') >= 0 ? parseInt(this.selHeight) * this.pxRatio : parseInt(
+											sH = this.selHeight.toString().indexOf('upx') >= 0 ? parseInt(this.selHeight) * this.pxRatio : parseInt(
 												this.selHeight);
-										style.width = selWidth + 'px';
-										style.height = selHeight + 'px';
-										style.top = ((this.windowHeight - selHeight - tabHeight)|0) / 2 + 'px';
-										style.left = ((this.windowWidth - selWidth)|0) / 2 + 'px';
+										style.width = sW + 'px';
+										style.height = sH + 'px';
+										style.top = ((this.wH - sH - tH)|0) / 2 + 'px';
+										style.left = ((this.wW - sW)|0) / 2 + 'px';
 									} else {
 										uni.showModal({
 											title: '裁剪框的宽或高没有设置',
@@ -219,7 +223,7 @@
 										})
 										return;
 									}
-									this.selStyle = style;
+									this.sS = style;
 								}
 
 								if (this.noBar) {
@@ -252,13 +256,13 @@
 					this.fUploading = false;
 				}, 1000)
 
-				let style = this.selStyle,
+				let style = this.sS,
 					x = parseInt(style.left),
 					y = parseInt(style.top),
 					width = parseInt(style.width),
 					height = parseInt(style.height),
-					expWidth = this.exportWidth || (width* this.pixelRatio),
-					expHeight = this.exportHeight || (height* this.pixelRatio);
+					expWidth = this.eW || (width* this.pixelRatio),
+					expHeight = this.eH || (height* this.pixelRatio);
 
 				// #ifdef MP-ALIPAY
 				uni.showLoading();
@@ -270,12 +274,12 @@
 				});
 				// #endif
 
-				this.styleDisplay = 'none';
-				this.styleTop = '-10000px';
+				this.sD = 'none';
+				this.sT = '-10000px';
 				this.hasSel = false;
 				this.fHideImg();
 				// #ifdef MP-ALIPAY
-				this.ctxCanvas.toTempFilePath({
+				this.cc.toTempFilePath({
 					x: x,
 					y: y,
 					width: width,
@@ -303,6 +307,7 @@
 					complete: () => {
 						uni.hideLoading();
 						this.noBar || uni.showTabBar();
+						this.$emit("end");
 					}
 				});
 				// #endif
@@ -350,6 +355,7 @@
 					complete: () => {
 						uni.hideLoading();
 						this.noBar || uni.showTabBar();
+						this.$emit("end");
 					}
 				}, this);
 				// #endif
@@ -361,15 +367,15 @@
 					this.fPrvUploading = false;
 				}, 1000)
 
-				let style = this.selStyle,
+				let style = this.sS,
 					destWidth = parseInt(style.width),
 					destHeight = parseInt(style.height),
 					prvX = this.prvX,
 					prvY = this.prvY,
 					prvWidth = this.prvWidth,
 					prvHeight = this.prvHeight,
-					expWidth = this.exportWidth || (parseInt(style.width) * this.pixelRatio),
-					expHeight = this.exportHeight || (parseInt(style.height) * this.pixelRatio);
+					expWidth = this.eW || (parseInt(style.width) * this.pixelRatio),
+					expHeight = this.eH || (parseInt(style.height) * this.pixelRatio);
 
 				// #ifdef MP-ALIPAY
 				uni.showLoading();
@@ -381,12 +387,12 @@
 				});
 				// #endif
 
-				this.styleDisplay = 'none';
-				this.styleTop = '-10000px';
+				this.sD = 'none';
+				this.sT = '-10000px';
 				this.hasSel = false;
 				this.fHideImg();
 				// #ifdef MP-ALIPAY
-				this.ctxCanvasPrv.toTempFilePath({
+				this.ccp.toTempFilePath({
 					x: prvX,
 					y: prvY,
 					width: prvWidth,
@@ -414,6 +420,7 @@
 					complete: () => {
 						uni.hideLoading();
 						this.noBar || uni.showTabBar();
+						this.$emit("end");
 					}
 				});
 				// #endif
@@ -460,21 +467,22 @@
 					complete: () => {
 						uni.hideLoading();
 						this.noBar || uni.showTabBar();
+						this.$emit("end");
 					}
 				}, this);
 				// #endif
 			},
 			fDrawInit(ini = false) {
-				let allWidth = this.windowWidth,
-					allHeight = this.windowHeight,
+				let allWidth = this.wW,
+					allHeight = this.wH,
 					imgWidth = this.imgWidth,
 					imgHeight = this.imgHeight,
 					imgRadio = imgWidth / imgHeight,
 					useWidth = allWidth - 40,
-					useHeight = allHeight - tabHeight - 80,
+					useHeight = allHeight - tH - 80,
 					useRadio = useWidth / useHeight,
-					selWidth = parseInt(this.selStyle.width),
-					selHeight = parseInt(this.selStyle.height);
+					sW = parseInt(this.sS.width),
+					sH = parseInt(this.sS.height);
 
 				this.fixWidth = 0;
 				this.fixHeight = 0;
@@ -496,11 +504,11 @@
 						else this.fixWidth = 1;
 						break;
 					case 'longSel':
-						if (selWidth > selHeight) this.fixWidth = 1;
+						if (sW > sH) this.fixWidth = 1;
 						else this.fixHeight = 1;
 						break;
 					case 'shortSel':
-						if (selWidth > selHeight) this.fixHeight = 1;
+						if (sW > sH) this.fixHeight = 1;
 						else this.fixWidth = 1;
 						break;
 				}
@@ -520,19 +528,19 @@
 						else this.lckWidth = 1;
 						break;
 					case 'longSel':
-						if (selWidth > selHeight) this.lckWidth = 1;
+						if (sW > sH) this.lckWidth = 1;
 						else this.lckHeight = 1;
 						break;
 					case 'shortSel':
-						if (selWidth > selHeight) this.lckHeight = 1;
+						if (sW > sH) this.lckHeight = 1;
 						else this.lckWidth = 1;
 						break;
 				}
 				if (this.fixWidth) {
-					useWidth = selWidth;
+					useWidth = sW;
 					useHeight = useWidth / imgRadio;
 				} else if (this.fixHeight) {
-					useHeight = selHeight;
+					useHeight = sH;
 					useWidth = useHeight * imgRadio;
 				} else if (imgRadio < useRadio) {
 					if (imgHeight < useHeight) {
@@ -550,13 +558,13 @@
 					}
 				}
 				if (this.isin) {
-					if (useWidth < selWidth) {
-						useWidth = selWidth;
+					if (useWidth < sW) {
+						useWidth = sW;
 						useHeight = useWidth / imgRadio;
 						this.lckHeight = 0;
 					}
-					if (useHeight < selHeight) {
-						useHeight = selHeight;
+					if (useHeight < sH) {
+						useHeight = sH;
 						useWidth = useHeight * imgRadio;
 						this.lckWidth = 0;
 					}
@@ -565,7 +573,7 @@
 				this.scaleSize = 1;
 				this.rotateDeg = 0;
 				this.posWidth = (allWidth - useWidth) / 2 | 0;
-				this.posHeight = (allHeight - useHeight - tabHeight) / 2 | 0;
+				this.posHeight = (allHeight - useHeight - tH) / 2 | 0;
 				this.useWidth = useWidth | 0;
 				this.useHeight = useHeight | 0;
 				this.centerX = this.posWidth + useWidth / 2;
@@ -573,97 +581,96 @@
 				this.focusX = 0;
 				this.focusY = 0;
 
-				let style = this.selStyle,
+				let style = this.sS,
 					left = parseInt(style.left),
 					top = parseInt(style.top),
 					width = parseInt(style.width),
 					height = parseInt(style.height),
 					canvas = this.canvas,
 					canvasOper = this.canvasOper,
-					ctxCanvas = this.ctxCanvas,
-					ctxCanvasOper = this.ctxCanvasOper;
+					cc = this.cc,
+					cco = this.cco;
 					
-				ctxCanvasOper.beginPath();
-				ctxCanvasOper.setLineWidth(3);
-				ctxCanvasOper.setGlobalAlpha(1);
-				ctxCanvasOper.setStrokeStyle('white');
-				ctxCanvasOper.strokeRect(left, top, width, height);
+				cco.beginPath();
+				cco.setLineWidth(3);
+				cco.setGlobalAlpha(1);
+				cco.setStrokeStyle('white');
+				cco.strokeRect(left, top, width, height);
 				
-				ctxCanvasOper.setFillStyle('black');
-				ctxCanvasOper.setGlobalAlpha(0.5);
-				ctxCanvasOper.fillRect(0, 0, this.windowWidth, top);
-				ctxCanvasOper.fillRect(0, top, left, height);
-				ctxCanvasOper.fillRect(0, top + height, this.windowWidth, this.windowHeight - height - top - tabHeight);
-				ctxCanvasOper.fillRect(left + width, top, this.windowWidth - width - left, height);
+				cco.setFillStyle('black');
+				cco.setGlobalAlpha(0.5);
+				cco.fillRect(0, 0, this.wW, top);
+				cco.fillRect(0, top, left, height);
+				cco.fillRect(0, top + height, this.wW, this.wH - height - top - tH);
+				cco.fillRect(left + width, top, this.wW - width - left, height);
 				
-				ctxCanvasOper.setGlobalAlpha(1);
-				ctxCanvasOper.setStrokeStyle('red');
-				ctxCanvasOper.moveTo(left+15, top);
-				ctxCanvasOper.lineTo(left, top);
-				ctxCanvasOper.lineTo(left, top+15);
-				ctxCanvasOper.moveTo(left+width-15, top);
-				ctxCanvasOper.lineTo(left+width, top);
-				ctxCanvasOper.lineTo(left+width, top+15);
-				ctxCanvasOper.moveTo(left+15, top+height);
-				ctxCanvasOper.lineTo(left, top+height);
-				ctxCanvasOper.lineTo(left, top+height-15);
-				ctxCanvasOper.moveTo(left+width-15, top+height);
-				ctxCanvasOper.lineTo(left+width, top+height);
-				ctxCanvasOper.lineTo(left+width, top+height-15);
-				ctxCanvasOper.stroke();
+				cco.setGlobalAlpha(1);
+				cco.setStrokeStyle('red');
+				cco.moveTo(left+15, top);
+				cco.lineTo(left, top);
+				cco.lineTo(left, top+15);
+				cco.moveTo(left+width-15, top);
+				cco.lineTo(left+width, top);
+				cco.lineTo(left+width, top+15);
+				cco.moveTo(left+15, top+height);
+				cco.lineTo(left, top+height);
+				cco.lineTo(left, top+height-15);
+				cco.moveTo(left+width-15, top+height);
+				cco.lineTo(left+width, top+height);
+				cco.lineTo(left+width, top+height-15);
+				cco.stroke();
 				
-				ctxCanvasOper.draw(false, () => {
+				cco.draw(false, () => {
 					if (ini) {
-						this.styleDisplay = 'flex';
-						this.styleTop = this.drawTop + 'px';
+						this.sD = 'flex';
+						this.sT = this.drawTop + 'px';
 						this.fDrawImage(true);
 					}
 				});
-				
-				this.$emit("avtinit");
+				this.$emit("init");
 			},
 			fDrawImage(ini = false) {
 				let tm_now = Date.now();
 				if (tm_now - this.drawTm < 20) return;
 				this.drawTm = tm_now;
 
-				let ctxCanvas = this.ctxCanvas,
+				let cc = this.cc,
 					imgWidth = this.useWidth * this.scaleSize,
 					imgHeight = this.useHeight * this.scaleSize;
 
 				// #ifdef MP-ALIPAY	
-				ctxCanvas.save();
+				cc.save();
 				// #endif
 				
 				if (this.bgImage) {
 					// #ifdef MP-ALIPAY
-					ctxCanvas.clearRect(0, 0, this.windowWidth, this.windowHeight - tabHeight);
+					cc.clearRect(0, 0, this.wW, this.wH - tH);
 					// #endif
 					// #ifndef MP-ALIPAY
-					ctxCanvas.drawImage(this.bgImage, 0, 0, this.windowWidth, this.windowHeight - tabHeight);
+					cc.drawImage(this.bgImage, 0, 0, this.wW, this.wH - tH);
 					// #endif
 				} else {
-					ctxCanvas.fillRect(0, 0, this.windowWidth, this.windowHeight - tabHeight);
+					cc.fillRect(0, 0, this.wW, this.wH - tH);
 				}
 
 				if (this.isin) {
 					let cx = this.focusX * (this.scaleSize - 1),
 						cy = this.focusY * (this.scaleSize - 1);
 
-					ctxCanvas.translate(this.centerX, this.centerY);
-					ctxCanvas.rotate(this.rotateDeg * Math.PI / 180);
-					ctxCanvas.drawImage(this.imgPath, this.posWidth-this.centerX-cx, this.posHeight-this.centerY-cy, imgWidth, imgHeight);
+					cc.translate(this.centerX, this.centerY);
+					cc.rotate(this.rotateDeg * Math.PI / 180);
+					cc.drawImage(this.imgPath, this.posWidth-this.centerX-cx, this.posHeight-this.centerY-cy, imgWidth, imgHeight);
 				
 				} else {
-					ctxCanvas.translate(this.posWidth + imgWidth / 2, this.posHeight + imgHeight / 2);
-					ctxCanvas.rotate(this.rotateDeg * Math.PI / 180);
-					ctxCanvas.drawImage(this.imgPath, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
+					cc.translate(this.posWidth + imgWidth / 2, this.posHeight + imgHeight / 2);
+					cc.rotate(this.rotateDeg * Math.PI / 180);
+					cc.drawImage(this.imgPath, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
 				}
 
-				ctxCanvas.draw(false);
+				cc.draw(false);
 
 				// #ifdef MP-ALIPAY
-				ctxCanvas.restore();
+				cc.restore();
 				// #endif
 			},
 			fPreview() {
@@ -673,7 +680,7 @@
 					this.fPreviewing = false;
 				}, 1000);
 
-				let style = this.selStyle,
+				let style = this.sS,
 					x = parseInt(style.left),
 					y = parseInt(style.top),
 					width = parseInt(style.width),
@@ -690,7 +697,7 @@
 				// #endif
 
 				// #ifdef MP-ALIPAY
-				this.ctxCanvas.toTempFilePath({
+				this.cc.toTempFilePath({
 					x: x,
 					y: y,
 					width: width,
@@ -701,11 +708,11 @@
 					quality: this.qlty,
 					success: (r) => {
 						this.prvImgTmp = r = r.apFilePath;
-						let ctxCanvasPrv = this.ctxCanvasPrv,
-							prvX = this.windowWidth,
-							prvY = parseInt(this.cvsStyleHeight),
-							prvWidth = parseInt(this.selStyle.width),
-							prvHeight = parseInt(this.selStyle.height),
+						let ccp = this.ccp,
+							prvX = this.wW,
+							prvY = parseInt(this.csH),
+							prvWidth = parseInt(this.sS.width),
+							prvHeight = parseInt(this.sS.height),
 							useWidth = prvX - 40,
 							useHeight = prvY - 80,
 							radio = useWidth / prvWidth,
@@ -718,16 +725,16 @@
 							prvWidth *= radio;
 							prvHeight = useHeight;
 						}
-						ctxCanvasPrv.fillRect(0, 0, prvX, prvY);
+						ccp.fillRect(0, 0, prvX, prvY);
 						this.prvX = prvX = ((prvX - prvWidth) / 2) | 0;
 						this.prvY = prvY = ((prvY - prvHeight) / 2) | 0;
 						this.prvWidth = prvWidth = prvWidth | 0;
 						this.prvHeight = prvHeight = prvHeight | 0;
-						ctxCanvasPrv.drawImage(r, prvX, prvY, prvWidth, prvHeight);
-						ctxCanvasPrv.draw(false);
+						ccp.drawImage(r, prvX, prvY, prvWidth, prvHeight);
+						ccp.draw(false);
 
-						this.showOper = false;
-						this.prvTop = '0';
+						this.sO = false;
+						this.pT = '0';
 					},
 					fail: () => {
 						uni.showToast({
@@ -755,21 +762,21 @@
 					success: (r) => {
 						this.prvImgTmp = r = r.tempFilePath;
 
-						let ctxCanvasPrv = this.ctxCanvasPrv,
-							prvX = this.windowWidth,
-							prvY = parseInt(this.cvsStyleHeight);
+						let ccp = this.ccp,
+							prvX = this.wW,
+							prvY = parseInt(this.csH);
 
 						// #ifndef H5||MP-WEIXIN||APP-PLUS
-						prvY += tabHeight;
+						prvY += tH;
 						// #endif
 						// #ifdef APP-PLUS
 						if (this.platform === 'android') {
-							prvY += tabHeight;
+							prvY += tH;
 						}
 						// #endif
 
-						let prvWidth = parseInt(this.selStyle.width),
-							prvHeight = parseInt(this.selStyle.height),
+						let prvWidth = parseInt(this.sS.width),
+							prvHeight = parseInt(this.sS.height),
 							useWidth = prvX - 40,
 							useHeight = prvY - 80,
 							radio = useWidth / prvWidth,
@@ -783,24 +790,24 @@
 							prvHeight = useHeight;
 						}
 
-						ctxCanvasPrv.fillRect(0, 0, prvX, prvY);
+						ccp.fillRect(0, 0, prvX, prvY);
 						this.prvX = prvX = ((prvX - prvWidth) / 2) | 0;
 						this.prvY = prvY = ((prvY - prvHeight) / 2) | 0;
 						this.prvWidth = prvWidth = prvWidth | 0;
 						this.prvHeight = prvHeight = prvHeight | 0;
-						ctxCanvasPrv.drawImage(r, prvX, prvY, prvWidth, prvHeight);
-						ctxCanvasPrv.draw(false);
+						ccp.drawImage(r, prvX, prvY, prvWidth, prvHeight);
+						ccp.draw(false);
 
 						// #ifdef H5
 						this.btop(r).then((r) => {
-							this.showOper = false;
-							this.prvTop = this.drawTop + 'px';
+							this.sO = false;
+							this.pT = this.drawTop + 'px';
 						})
 						// #endif
 						
-						this.showOper = false; 
-						// if (this.platform === 'android') this.showOper = false;
-						this.prvTop = this.drawTop + 'px';
+						this.sO = false; 
+						// if (this.platform === 'android') this.sO = false;
+						this.pT = this.drawTop + 'px';
 					},
 					fail: () => {
 						uni.showToast({
@@ -816,8 +823,8 @@
 			},
 			fChooseImg(index = undefined, params = undefined, data = undefined) {
 				if (params) {
-					let selWidth = params.selWidth,
-						selHeight = params.selHeight,
+					let sW = params.selWidth,
+						sH = params.selHeight,
 						expWidth = params.expWidth,
 						expHeight = params.expHeight,
 						quality = params.quality,
@@ -830,9 +837,9 @@
 						inner = params.inner,
 						lock = params.lock;
 
-					expWidth && (this.exportWidth = expWidth.indexOf('upx') >= 0 ? parseInt(expWidth) * this.pxRatio : parseInt(
+					expWidth && (this.eW = expWidth.toString().indexOf('upx') >= 0 ? parseInt(expWidth) * this.pxRatio : parseInt(
 						expWidth));
-					expHeight && (this.exportHeight = expHeight.indexOf('upx') >= 0 ? parseInt(expHeight) * this.pxRatio : parseInt(
+					expHeight && (this.eH = expHeight.toString().indexOf('upx') >= 0 ? parseInt(expHeight) * this.pxRatio : parseInt(
 						expHeight));
 					this.letRotate = (canRotate === false || inner === true || inner === 'true' || canRotate === 'false') ? 0 : 1;
 					this.letScale = (canScale === false || canScale === 'false') ? 0 : 1;
@@ -844,20 +851,20 @@
 					this.fType = fileType === 'jpg' ? 'jpg' : 'png';
 					this.lck = lock;
 					if (this.isin||!this.letRotate) {
-						this.btnWidth = '24%';
-						this.btnDsp = 'none';
+						this.bW = '24%';
+						this.bD = 'none';
 					} else {
-						this.btnWidth = '19%';
-						this.btnDsp = 'flex';
+						this.bW = '19%';
+						this.bD = 'flex';
 					}
 
-					if (selWidth && selHeight) {
-						selWidth = selWidth.indexOf('upx') >= 0 ? parseInt(selWidth) * this.pxRatio : parseInt(selWidth);
-						selHeight = selHeight.indexOf('upx') >= 0 ? parseInt(selHeight) * this.pxRatio : parseInt(selHeight);
-						this.selStyle.width = selWidth + 'px';
-						this.selStyle.height = selHeight + 'px';
-						this.selStyle.top = ((this.windowHeight - selHeight - tabHeight)|0) / 2 + 'px';
-						this.selStyle.left = ((this.windowWidth - selWidth)|0) / 2 + 'px';
+					if (sW && sH) {
+						sW = sW.toString().indexOf('upx') >= 0 ? parseInt(sW) * this.pxRatio : parseInt(sW);
+						sH = sH.toString().indexOf('upx') >= 0 ? parseInt(sH) * this.pxRatio : parseInt(sH);
+						this.sS.width = sW + 'px';
+						this.sS.height = sH + 'px';
+						this.sS.top = ((this.wH - sH - tH)|0) / 2 + 'px';
+						this.sS.left = ((this.wW - sW)|0) / 2 + 'px';
 						this.hasSel = true;
 					}
 				}
@@ -909,10 +916,10 @@
 								t = this.posHeight - growY,
 								r = l + imgWidth,
 								b = t + imgHeight,
-								left = parseInt(this.selStyle.left),
-								top = parseInt(this.selStyle.top),
-								width = parseInt(this.selStyle.width),
-								height = parseInt(this.selStyle.height),
+								left = parseInt(this.sS.left),
+								top = parseInt(this.sS.top),
+								width = parseInt(this.sS.width),
+								height = parseInt(this.sS.height),
 								right = left + width,
 								bottom = top + height,
 								cx, cy;
@@ -963,10 +970,10 @@
 							t = beY,
 							r = l + imgWidth,
 							b = t + imgHeight,
-							left = parseInt(this.selStyle.left),
-							top = parseInt(this.selStyle.top),
-							right = left + parseInt(this.selStyle.width),
-							bottom = top + parseInt(this.selStyle.height),
+							left = parseInt(this.sS.left),
+							top = parseInt(this.sS.top),
+							right = left + parseInt(this.sS.width),
+							bottom = top + parseInt(this.sS.height),
 							cx, cy;
 
 						this.cx = cx = this.focusX * this.scaleSize - this.focusX;
@@ -1018,17 +1025,18 @@
 			},
 			fHideImg() {
 				this.prvImg = '';
-				this.prvTop = '-10000px';
-				this.showOper = true;
+				this.pT = '-10000px';
+				this.sO = true;
 				this.prvImgData = null;
 				this.target = null;
 			},
 			fClose() {
-				this.styleDisplay = 'none';
-				this.styleTop = '-10000px';
+				this.sD = 'none';
+				this.sT = '-10000px';
 				this.hasSel = false;
 				this.fHideImg();
 				this.noBar || uni.showTabBar();
+				this.$emit("end");
 			},
 			fGetImgData() {
 				return new Promise((resolve, reject) => {
@@ -1037,7 +1045,7 @@
 						prvWidth = this.prvWidth,
 						prvHeight = this.prvHeight;
 					// #ifdef MP-ALIPAY
-					this.ctxCanvasPrv.getImageData({
+					this.ccp.getImageData({
 						x: prvX,
 						y: prvY,
 						width: prvWidth,
@@ -1187,7 +1195,7 @@
 					prvHeight = this.prvHeight;
 
 				// #ifdef MP-ALIPAY
-				this.ctxCanvasPrv.putImageData({
+				this.ccp.putImageData({
 					x: prvX,
 					y: prvY,
 					width: prvWidth,
