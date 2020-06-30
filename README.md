@@ -87,14 +87,14 @@ H5测试地址
 
 | 属性        | 必须 | 说明                                                         |
 | ----------- | ---- | ------------------------------------------------------------ |
-| selWidth    | 是   | 裁剪区域的宽                                                 |
-| selHeight   | 是   | 裁剪区域的高                                                 |
+| selWidth    | 是   | 裁剪区域的宽，单位px或upx                                                 |
+| selHeight   | 是   | 裁剪区域的高，单位px或upx                                                 |
 | noTab       | 否   | 是否存在tabBar，默认false，即有tabBar。**支付宝小程序必须填写，不然无法运行** |
 | avatarSrc   | 否   | 头像地址                                                     |
 | avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
 | bgImg       | 否   | 剪切背景图片，默认黑色背景                                   |
-| expWidth    | 否   | 设置导出图片宽度。默认值selWidth*屏幕像素密度                |
-| expHeight   | 否   | 设置导出图片高度。默认值selHeight*屏幕像素密度               |
+| expWidth    | 否   | 设置导出图片宽度。默认值selWidth*屏幕像素密度，单位px或upx                |
+| expHeight   | 否   | 设置导出图片高度。默认值selHeight*屏幕像素密度，单位px或upx               |
 | inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
 | quality     | 否   | 生成图片质量，取值范围0~1，默认1                             |
 | index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
