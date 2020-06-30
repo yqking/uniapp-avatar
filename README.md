@@ -2,11 +2,9 @@
 
 注意：
 
-1)  android4.4之前的版本，uniapp部分函数有bug，请使用高版本进行测试
+1)  H5平台，后台收到文件后，需要根据文件类型添加后缀，无法直接使用文件后缀
 
-2)  H5平台，后台收到文件后，需要根据文件类型添加后缀，无法直接使用文件后缀
-
-3)  百度小程序使用头像的页面，需要在页面style里配置 "disableScroll": true
+2)  百度小程序使用头像的页面，需要在页面style里配置 "disableScroll": true
 
 H5测试地址
 
@@ -16,7 +14,7 @@ H5测试地址
 
 感谢如下用户信息反馈，为组件优化提供宝贵意见和建议
 
- **393747897@qq.com、caomeiyouren@qq.com、enson、lionxiong、dcloud@zdxai.com、暮雪骄阳、帅少**
+ **393747897@qq.com、caomeiyouren@qq.com、enson、lionxiong、dcloud@zdxai.com、<br/>暮雪骄阳、帅少**
 
 <br/><br/>
 
@@ -85,37 +83,37 @@ H5测试地址
 
 <br/>
 
-| 属性        | 必须 | 说明                                                         |
-| ----------- | ---- | ------------------------------------------------------------ |
-| selWidth    | 是   | 裁剪区域的宽，单位px或upx                                                 |
-| selHeight   | 是   | 裁剪区域的高，单位px或upx                                                 |
-| noTab       | 否   | 是否存在tabBar，默认false，即有tabBar。**支付宝小程序必须填写，不然无法运行** |
-| avatarSrc   | 否   | 头像地址                                                     |
-| avatarStyle | 否   | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
-| bgImg       | 否   | 剪切背景图片，默认黑色背景                                   |
-| expWidth    | 否   | 设置导出图片宽度。默认值selWidth*屏幕像素密度，单位px或upx                |
-| expHeight   | 否   | 设置导出图片高度。默认值selHeight*屏幕像素密度，单位px或upx               |
-| inner       | 否   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
-| quality     | 否   | 生成图片质量，取值范围0~1，默认1                             |
-| index       | 否   | 索引，回调upload方法，返回该index值，默认undefined           |
-| fileType    | 否   | 报错图片格式，jpg或png，默认png。                            |
-| minScale    | 否   | 缩放允许的最小比例，默认0.3                                  |
-| maxScale    | 否   | 缩放允许的最大比例，默认4                                    |
-| canRotate   | 否   | 是否允许旋转，默认true                                       |
-| canScale    | 否   | 是否允许缩放，默认true                                       |
-| stretch     | 否   | 图片一边自动铺满裁剪框<br/>x: x轴方向，图片自动铺满<br/>y: y轴方向，图片自动铺满<br/>long:  根据图片长边自动铺满<br/>short:  根据图片短边自动铺满<br/>longSel:  根据裁剪框长边自动铺满<br/>shortSel:  根据裁剪框短边自动铺满 |
-| lock        | 否   | 锁定图片移动方向<br/>x:  锁定x轴方向<br/>y:  锁定y轴方向<br/>long: 锁定图片长边方向<br/>short:  锁定图片短边方向<br/>longSel:  锁定裁剪框长边方向<br/>shortSel:  锁定裁剪框短边方向 |
+| 属性        | 必须 | 类型   | 说明                                                         |
+| ----------- | ---- | ------ | ------------------------------------------------------------ |
+| selWidth    | 是   | string | 裁剪区域的宽，单位px或upx                                    |
+| selHeight   | 是   | string | 裁剪区域的高，单位px或upx                                    |
+| noTab       | 否   | bool   | 是否存在tabBar，默认false，即有tabBar。**支付宝小程序必须填写，不然无法运行** |
+| avatarSrc   | 否   | string | 头像地址                                                     |
+| avatarStyle | 否   | object | 头像样式，默认{width: 150upx; height: 150upx; border-radius: 100%;} |
+| bgImg       | 否   | string | 剪切背景图片，默认黑色背景                                   |
+| expWidth    | 否   | string | 设置导出图片宽度。默认值selWidth*屏幕像素密度，单位px或upx   |
+| expHeight   | 否   | string | 设置导出图片高度。默认值selHeight*屏幕像素密度，单位px或upx  |
+| inner       | 否   | bool   | 只允许在图片范围内移动，并禁用一切旋转，默认false            |
+| quality     | 否   | number | 生成图片质量，取值范围0~1，默认1                             |
+| index       | 否   | any    | 索引，回调upload方法，返回该index值，默认undefined           |
+| fileType    | 否   | string | 报错图片格式，jpg或png，默认png。                            |
+| minScale    | 否   | number | 缩放允许的最小比例，默认0.3                                  |
+| maxScale    | 否   | number | 缩放允许的最大比例，默认4                                    |
+| canRotate   | 否   | bool   | 是否允许旋转，默认true                                       |
+| canScale    | 否   | bool   | 是否允许缩放，默认true                                       |
+| stretch     | 否   | string | 图片一边自动铺满裁剪框<br/>x: x轴方向，图片自动铺满<br/>y: y轴方向，图片自动铺满<br/>long:  根据图片长边自动铺满<br/>short:  根据图片短边自动铺满<br/>longSel:  根据裁剪框长边自动铺满<br/>shortSel:  根据裁剪框短边自动铺满 |
+| lock        | 否   | string | 锁定图片移动方向<br/>x:  锁定x轴方向<br/>y:  锁定y轴方向<br/>long: 锁定图片长边方向<br/>short:  锁定图片短边方向<br/>longSel:  锁定裁剪框长边方向<br/>shortSel:  锁定裁剪框短边方向 |
 
 <br/>
 
-| 回调 | 必须 | 参数说明                                                     |
-| -------- | ---- | :----------------------------------------------------------- |
-| upload   | 是   | <p align="left">点击上传后回调<br/>{<br/>avatar：对象类型，可以通过更新imgSrc值，更新头像<br/>path：临时头像地址<br/>index：图片索引<br/>data：通过fChooseImg函数设置的额外数据，默认undefined<br/>base64：当前只有H5平台有base64格式图片<br/>}</p> |
-| init  | 否   | 图片裁剪之前回调，可用于自定义操作，例如禁用下拉刷新、隐藏自定义tabBar(例如colorUI tabbar) |
-| end | 否 | 关闭或上传后回调，可用于自定义操作，例如开启下拉刷新、显示自定义tabBar |
+| 回调   | 必须 | 参数说明                                                     |
+| ------ | ---- | :----------------------------------------------------------- |
+| upload | 是   | <p align="left">点击上传后回调<br/>{<br/>avatar：对象类型，可以通过更新imgSrc值，更新头像<br/>path：临时头像地址<br/>index：图片索引<br/>data：通过fChooseImg函数设置的额外数据，默认undefined<br/>base64：当前只有H5平台有base64格式图片<br/>}</p> |
+| init   | 否   | 在图片裁剪之前回调，可用于自定义操作，例如禁用下拉刷新、隐藏自定义tabBar(例如colorUI tabbar) |
+| end    | 否   | 关闭或上传后回调，可用于自定义操作，例如开启下拉刷新、显示自定义tabBar |
 <br/>
 
-| 方法                   | 参数说明                                                     |
+| 方法                            | 参数说明                                                     |
 | ------------------------------- | ------------------------------------------------------------ |
 | fChooseImg(index, params, data) | <p align="left">触发图片选着<br/>index：索引，默认undefined<br/>params：对象类型，默认undefined，可设置属性有selWidth、selHeight、<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expWidth、expHeight、quality、canRotate、canScale、minScale、<br/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxScale、stretch、lock、inner<br/>data：回调时的额外数据，可以是任何类型，默认undefined </p> |
 
@@ -127,6 +125,7 @@ H5测试地址
 
 | 版本  | 变化                                                         |
 | ----- | :----------------------------------------------------------- |
+| 3.4.2 | 参数优化处理                                                 |
 | 3.4.1 | 功能完善，代码结构优化                                       |
 | 3.3.4 | 支付宝平台必须填写noTab参数                                  |
 | 3.3.3 | 修复导出大尺寸错误bug，修改expWidth、expHeight默认计算规则，性能优化 |

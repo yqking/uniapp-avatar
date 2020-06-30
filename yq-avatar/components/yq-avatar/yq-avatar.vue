@@ -7,7 +7,7 @@
 		 disable-scroll="false" @touchstart="fStart" @touchmove="fMove" @touchend="fEnd"></canvas>
 		<canvas canvas-id="prv-canvas" id="prv-canvas" class="prv-canvas" disable-scroll="false" 
 		@touchstart="fHideImg" :style="{ height: csH, top: pT }"></canvas>
-		<view class="oper-wrapper" :style="{display: sD, bottom:btm}">
+		<view class="oper-wrapper" :style="{display: sD, top:tp}">
 			<view class="oper">
 				<view class="btn-wrapper" v-if="sO">
 					<view @click="fSelect" hover-class="hover" :style="{width: bW}"><text>重选</text></view>
@@ -42,7 +42,7 @@
 				sO: true,
 				bW: '19%',
 				bD: 'flex',
-				btm: 0,
+				tp: 0,
 				imgSrc: {
 					imgSrc: ''
 				}
@@ -79,14 +79,14 @@
 			this.cc = uni.createCanvasContext('avatar-canvas', this);
 			this.cco = uni.createCanvasContext('oper-canvas', this);
 			this.ccp = uni.createCanvasContext('prv-canvas', this);
-			this.qlty = parseInt(this.quality) || 1;
+			this.qlty = parseFloat(this.quality) || 1;
 			this.imgSrc.imgSrc = this.avatarSrc;
 			this.letRotate = (this.canRotate === false || this.inner === true || this.inner === 'true' || this.canRotate === 'false') ? 0 : 1;
 			this.letScale = (this.canScale === false || this.canScale === 'false') ? 0 : 1;
 			this.isin = (this.inner === true || this.inner === 'true') ? 1 : 0;
 			this.indx = this.index || undefined;
-			this.mnScale = this.minScale || 0.3;
-			this.mxScale = this.maxScale || 4;
+			this.mnScale = parseFloat(this.minScale) || 0.3;
+			this.mxScale = parseFloat(this.maxScale) || 4;
 			this.noBar = (this.noTab === true || this.noTab === 'true') ? 1 : 0;
 			this.stc = this.stretch;
 			this.lck = this.lock;
@@ -121,27 +121,29 @@
 				this.platform = sysInfo.platform;
 				this.wW = sysInfo.windowWidth;
 
+				// #ifdef H5
+				this.drawTop = sysInfo.windowTop;
+				// #endif
+				// #ifndef H5
 				this.drawTop = 0;
+				// #endif
+				
 				// #ifdef MP-ALIPAY
 				this.wH = sysInfo.screenHeight - sysInfo.statusBarHeight - sysInfo.titleBarHeight;
 				this.csH = this.wH - tH  + 'px';
 				// #endif
 				
 				// #ifndef MP-ALIPAY
-				if(sysInfo.screenHeight === sysInfo.windowHeight) {
-					this.wH = sysInfo.screenHeight;
-					this.csH = this.wH - tH  + 'px';
-				} else {
-					this.wH = sysInfo.windowHeight;
-					if(!this.noBar) this.wH += tH;
-					this.csH = this.wH - tH  + 'px';
-				}
-				// #ifdef MP
-				this.btm = sysInfo.screenHeight - this.wH + 'px';
-				// #endif
+				this.wH = sysInfo.windowHeight;
+				if(!this.noBar) this.wH += tH;
+				this.csH = this.wH - tH  + 'px';
 				// #endif
 				
-
+				this.tp = this.csH;
+				// #ifdef H5
+				this.tp =  sysInfo.windowTop + parseInt(this.csH)+ 'px';
+				// #endif
+				
 				this.pxRatio = this.wW / 750;
 
 				let style = this.avatarStyle;
@@ -843,9 +845,9 @@
 						expHeight));
 					this.letRotate = (canRotate === false || inner === true || inner === 'true' || canRotate === 'false') ? 0 : 1;
 					this.letScale = (canScale === false || canScale === 'false') ? 0 : 1;
-					this.qlty = parseInt(quality) || 1;
-					this.mnScale = minScale || 0.3;
-					this.mxScale = maxScale || 4;
+					this.qlty = parseFloat(quality) || 1;
+					this.mnScale = parseFloat(minScale) || 0.3;
+					this.mxScale = parseFloat(maxScale) || 4;
 					this.stc = stretch;
 					this.isin = (inner === true || inner === 'true') ? 1 : 0;
 					this.fType = fileType === 'jpg' ? 'jpg' : 'png';
