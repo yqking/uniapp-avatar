@@ -1330,7 +1330,6 @@
 		justify-content: center;
 		font-size: 16px;
 		color: #333;
-		border: 1px solid #f1f1f1;
 		border-radius: 6%;
 	}
 
